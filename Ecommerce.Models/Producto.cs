@@ -9,11 +9,11 @@ namespace Ecommerce.Models
     public class Producto
     {
         public Guid Id { get; set; } = Guid.NewGuid();
-        public string Titulo { get; set; }
-        public string Categoria { get; set; }
-        public string Descripcion { get; set; }
+        public string Titulo { get; set; } = string.Empty;
+        public string Categoria { get; set; } = string.Empty;
+        public string Descripcion { get; set; } = string.Empty;
         public int Precio { get; set; }
-        public Guid WishlistId { get; set; }
+        public Guid? WishlistId { get; set; }
         public Wishlist? Wishlist { get; set; }
     }
 }

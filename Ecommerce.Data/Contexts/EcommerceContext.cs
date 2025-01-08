@@ -13,10 +13,14 @@ namespace Ecommerce.Data.Contexts
     {
         #region Atributos
         public DbSet<Producto>? productos;
-        #endregion
+
+        public DbSet<Usuario>? usuarios;
+        #endregion 
 
         #region Propiedades
         public DbSet<Producto>? Productos => productos;
+
+        public DbSet<Usuario>? Usuarios => usuarios; 
         #endregion
 
         #region Constructor
@@ -36,6 +40,20 @@ namespace Ecommerce.Data.Contexts
                 p.Property(p => p.Precio);
             });
 
+            modelBuilder.Entity<Usuario>(u =>
+            {
+                u.ToTable("Usuarios");
+                u.HasKey(u => u.Id);
+                u.Property(u => u.Id).ValueGeneratedOnAdd();
+                u.Property(u => u.Nombre);
+                u.Property(u => u.Apellido);
+                u.Property(u => u.Password);
+                u.Property(u => u.Email);
+
+
+            });
+
+            modelBuilder.ApplyConfiguration(new UsuarioSeed());
             modelBuilder.ApplyConfiguration(new ProductoSeed());
         }
         #endregion
