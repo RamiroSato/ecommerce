@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace Ecommerce.Services
 {
 
-    internal class UsuarioService : IUsuarioService
+    public class UsuarioService : IUsuarioService
     {
 
         private readonly EcommerceContext _context;
