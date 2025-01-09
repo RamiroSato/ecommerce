@@ -12,7 +12,7 @@ namespace Ecommerce.Data.Contexts
     public class EcommerceContext : DbContext
     {
         #region Atributos
-        public DbSet<Producto>? productos;
+        private DbSet<Producto>? productos;
         #endregion
 
         #region Propiedades
@@ -26,6 +26,7 @@ namespace Ecommerce.Data.Contexts
         #region Metodos
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            #region Productos
             modelBuilder.Entity<Producto>(p =>
             {
                 p.HasKey(p => p.Id);
@@ -37,6 +38,7 @@ namespace Ecommerce.Data.Contexts
             });
 
             modelBuilder.ApplyConfiguration(new ProductoSeed());
+            #endregion
         }
         #endregion
     }
