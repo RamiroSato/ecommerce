@@ -1,5 +1,8 @@
 using Ecommerce.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
+using Ecommerce.Interfaces;
+using Ecommerce.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -14,7 +17,7 @@ builder.Services.AddDbContext<EcommerceContext>(options =>
         b => b.MigrationsAssembly("Ecommerce.Data") // Ensamblado de migraciones
     )
 );
-
+builder.Services.AddScoped<IProductoService, ProductoService>();
 
 
 var app = builder.Build();
