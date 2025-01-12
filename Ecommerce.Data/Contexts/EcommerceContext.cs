@@ -11,12 +11,9 @@ namespace Ecommerce.Data.Contexts
 {
     public class EcommerceContext : DbContext
     {
-        #region Atributos
-        private DbSet<Producto>? productos;
-        #endregion
-
         #region Propiedades
-        public DbSet<Producto>? Productos => productos;
+        public DbSet<Producto>? Productos { get; set; }
+        public DbSet<Wishlist>? Wishlists { get; set; }
         #endregion
 
         #region Constructor
@@ -35,6 +32,8 @@ namespace Ecommerce.Data.Contexts
                 p.Property(p => p.Categoria);
                 p.Property(p => p.Descripcion);
                 p.Property(p => p.Precio);
+                p.HasMany(p => p.Wishlists)
+                .WithMany(w => w.Productos);
             });
 
             modelBuilder.ApplyConfiguration(new ProductoSeed());

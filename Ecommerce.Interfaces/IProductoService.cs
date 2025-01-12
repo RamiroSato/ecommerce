@@ -9,10 +9,11 @@ namespace Ecommerce.Interfaces
 {
     public interface IProductoService
     {
-        Task<IEnumerable<Producto>> GetAllAsync();
-        Task<Producto> GetAsyncById(Guid id);
-        Task<Producto> CreateAsync(Producto producto);
-        Task<Producto> UpdateAsync(Guid id, Producto productoActualizado);
-        Task DeleteAsync(Guid id);
+        Task<IEnumerable<Producto>> GetAll();
+        Task<Producto> GetById(Guid id);
+        Task<PaginacionResultado<ProductoDto>> BuscarProductos(string? Titulo, int? Precio, int? page);
+        Task<Producto> Create(Producto producto);
+        Task<Producto> Update(Guid id, Producto productoActualizado);
+        Task Delete(Guid id);
     }
 }

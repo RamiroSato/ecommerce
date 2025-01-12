@@ -9,5 +9,6 @@ namespace Ecommerce.Models
     public class Wishlist
     {
         public Guid Id { get; set; }
+        public List<Producto>? Productos { get; set; }
     }
 }

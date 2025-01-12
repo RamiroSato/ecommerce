@@ -4,6 +4,7 @@ using Ecommerce.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Ecommerce.Data.Migrations
 {
     [DbContext(typeof(EcommerceContext))]
-    partial class EcommerceContextModelSnapshot : ModelSnapshot
+    [Migration("20250110053716_Prueba")]
+    partial class Prueba
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -74,7 +77,7 @@ namespace Ecommerce.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Wishlists");
+                    b.ToTable("Wishlist");
                 });
 
             modelBuilder.Entity("ProductoWishlist", b =>
@@ -82,12 +85,12 @@ namespace Ecommerce.Data.Migrations
                     b.Property<Guid>("ProductosId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("WishlistsId")
+                    b.Property<Guid>("WishlistId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("ProductosId", "WishlistsId");
+                    b.HasKey("ProductosId", "WishlistId");
 
-                    b.HasIndex("WishlistsId");
+                    b.HasIndex("WishlistId");
 
                     b.ToTable("ProductoWishlist");
                 });
@@ -102,7 +105,7 @@ namespace Ecommerce.Data.Migrations
 
                     b.HasOne("Ecommerce.Models.Wishlist", null)
                         .WithMany()
-                        .HasForeignKey("WishlistsId")
+                        .HasForeignKey("WishlistId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

@@ -16,20 +16,63 @@ namespace Ecommerce.Services
 
         public ProductoService(EcommerceContext context)
         {
-            _context = context;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task<IEnumerable<Producto>> GetAllAsync()
+        public async Task<IEnumerable<Producto>> GetAll()
         {
             return await _context.Productos.ToListAsync();
         }
 
-        public async Task<Producto> GetAsyncById(Guid id) 
+        public async Task<Producto> GetById(Guid id) 
         {
             return await _context.Productos.FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public async Task<Producto> CreateAsync(Producto producto)
+        private readonly int _records = 5;
+
+        public async Task<PaginacionResultado<ProductoDto>> BuscarProductos(string? Titulo, int? Precio, int? page)
+        {
+            int _page = page ?? 1;
+
+            var query = _context.Productos.AsQueryable();
+
+            if(!string.IsNullOrEmpty(Titulo))
+            {
+                query = query.Where(p => p.Titulo.Contains(Titulo));
+            }
+
+            if(Precio.HasValue)
+            {
+                query = query.Where(p => p.Precio == Precio);
+            }
+
+            int totalRecords = await query.CountAsync();
+
+            int totalPages = (int)Math.Ceiling(totalRecords / (decimal)_records);
+
+            var productos = await query
+                            .Skip((_page - 1) * _records)
+                            .Take(_records)
+                            .Select(p => new ProductoDto
+                            {
+                                Titulo = p.Titulo,
+                                Categoria = p.Categoria,
+                                Descripcion = p.Descripcion,
+                                Precio = p.Precio
+                            })
+                            .ToListAsync();
+
+            return new PaginacionResultado<ProductoDto>
+            {
+                TotalPaginas = totalPages,
+                PaginaActual = _page,
+                ProductosTotales = totalRecords,
+                Productos = productos
+            };
+        }
+
+        public async Task<Producto> Create(Producto producto)
         {
             if (producto.Id == Guid.Empty)
             {
@@ -42,9 +85,9 @@ namespace Ecommerce.Services
             return producto;
         }
 
-        public async Task<Producto> UpdateAsync(Guid id, Producto productoActualizado)
+        public async Task<Producto> Update(Guid id, Producto productoActualizado)
         {
-            var producto = await GetAsyncById(id);
+            var producto = await GetById(id);
 
             if (producto == null)
             {
@@ -56,15 +99,15 @@ namespace Ecommerce.Services
             producto.Categoria = productoActualizado.Categoria;
             producto.Descripcion = productoActualizado.Descripcion;
             producto.Precio = productoActualizado.Precio;
-            producto.Wishlist = productoActualizado.Wishlist;
+            producto.Wishlists = productoActualizado.Wishlists;
             await _context.SaveChangesAsync();
 
             return productoActualizado;
         }
 
-        public async Task DeleteAsync(Guid id)
+        public async Task Delete(Guid id)
         {
-            var producto = await GetAsyncById(id);
+            var producto = await GetById(id);
 
             if(producto != null)
             {

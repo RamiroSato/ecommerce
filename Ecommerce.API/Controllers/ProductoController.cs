@@ -11,8 +11,8 @@ using Ecommerce.Interfaces;
 
 namespace Ecommerce.API.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class ProductoController : ControllerBase
     {
         private readonly IProductoService _productoService;
@@ -26,15 +26,27 @@ namespace Ecommerce.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Producto>>> GetProductos()
         {
-            var productos = await _productoService.GetAllAsync();
+            var productos = await _productoService.GetAll();
             return Ok(productos);
+        }
+
+        // SEARCH: api/BuscarProducto
+        [HttpGet("buscar")]
+        public async Task<ActionResult<PaginacionResultado<ProductoDto>>> BuscarProductos(
+            [FromQuery] string? Titulo,
+            [FromQuery] int? Precio,
+            [FromQuery] int? page)
+        {
+            var resultado = await _productoService.BuscarProductos(Titulo, Precio, page);
+
+            return Ok(resultado);
         }
 
         // GET: api/Producto/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Producto>> GetProducto(Guid id)
         {
-            var producto = await _productoService.GetAsyncById(id);
+            var producto = await _productoService.GetById(id);
 
             if (producto == null)
             {
@@ -54,14 +66,14 @@ namespace Ecommerce.API.Controllers
                 return BadRequest("No es posible realizar la operación: el id proporcionado no coincide con ningún producto en la base de datos");
             }
 
-            var producto = await _productoService.GetAsyncById(id);
+            var producto = await _productoService.GetById(id);
 
             if (producto == null)
             {
                 return NotFound("No se encontró el producto"); 
             }
 
-            var actualizar = await _productoService.UpdateAsync(id, productoActualizado);
+            var actualizar = await _productoService.Update(id, productoActualizado);
 
             if(actualizar == null)
             {
@@ -76,7 +88,7 @@ namespace Ecommerce.API.Controllers
         [HttpPost]
         public async Task<ActionResult<Producto>> PostProducto(Producto producto)
         {
-            var productoCreado = await _productoService.CreateAsync(producto);
+            var productoCreado = await _productoService.Create(producto);
 
             return CreatedAtAction("GetProducto", new { id = productoCreado.Id }, productoCreado);
         }
@@ -85,14 +97,14 @@ namespace Ecommerce.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProducto(Guid id)
         {
-            var producto = await _productoService.GetAsyncById(id);
+            var producto = await _productoService.GetById(id);
 
             if (producto == null)
             {
                 return NotFound("Producto no encontrado");
             }
 
-            await _productoService.DeleteAsync(id);
+            await _productoService.Delete(id);
 
             return NoContent();
         }
