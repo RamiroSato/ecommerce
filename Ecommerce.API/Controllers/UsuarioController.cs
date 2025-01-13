@@ -106,7 +106,7 @@ namespace Ecommerce.API.Controllers
         {
             try
             {
-                var resultado = await _usuarioService.UpdateUsuario(usuario.UsuarioDtoAUsuario());
+                var resultado = await _usuarioService.UpdateUsuario(id ,usuario.UsuarioDtoAUsuario());
                 if (!resultado)
                 {
                     return NotFound(new { Message = $"El id '{id}' no corresponde a ningún usuario en la base de datos." });

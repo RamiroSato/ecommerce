@@ -62,9 +62,9 @@ namespace Ecommerce.Services
 
         }
 
-        public async Task<bool> UpdateUsuario(Usuario usuario)
+        public async Task<bool> UpdateUsuario(Guid id, Usuario usuario)
         {
-            var usuarioUpdate = await _context.usuarios.FirstOrDefaultAsync(u => u.Id == usuario.Id);
+            var usuarioUpdate = await _context.usuarios.FirstOrDefaultAsync(u => u.Id == id);
 
             if (usuarioUpdate == null)
             {

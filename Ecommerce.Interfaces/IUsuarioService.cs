@@ -15,6 +15,6 @@ namespace Ecommerce.Interfaces
 
         Task<bool> DeleteUsuario(Guid id);
 
-        Task<bool> UpdateUsuario(Usuario usuario);
+        Task<bool> UpdateUsuario(Guid id, Usuario usuario);
     }
 }
