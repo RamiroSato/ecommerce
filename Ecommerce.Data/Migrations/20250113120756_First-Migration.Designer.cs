@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Ecommerce.Data.Migrations
 {
     [DbContext(typeof(EcommerceContext))]
-    [Migration("20250108111247_fixing seeds ")]
-    partial class fixingseeds
+    [Migration("20250113120756_First-Migration")]
+    partial class FirstMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -54,24 +54,6 @@ namespace Ecommerce.Data.Migrations
                     b.HasIndex("WishlistId");
 
                     b.ToTable("Productos");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("11111111-1111-1111-1111-111111111111"),
-                            Categoria = "Remeras",
-                            Descripcion = "La chomba Lacoste blanca es un ícono de elegancia casual...",
-                            Precio = 60000,
-                            Titulo = "Chomba Lacoste Blanca"
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-222222222222"),
-                            Categoria = "Pantalones",
-                            Descripcion = "Los jeans Levi's azul son un básico imprescindible...",
-                            Precio = 100000,
-                            Titulo = "Jeans Levi's Azul"
-                        });
                 });
 
             modelBuilder.Entity("Ecommerce.Models.Usuario", b =>
@@ -84,44 +66,30 @@ namespace Ecommerce.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("IsActive")
+                        .HasColumnType("int");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Tipo")
+                    b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("WishlistId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Tipo")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("WishlistId");
-
-                    b.ToTable("Usuarios");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("f1a4d5a6-7c2b-4eab-9e47-8c6b3f4c7f81"),
-                            Apellido = "Pérez",
-                            Email = "juan.perez@example.com",
-                            Nombre = "Juan",
-                            Tipo = "Cliente"
-                        },
-                        new
-                        {
-                            Id = new Guid("f2b5d6a7-8d3c-5fab-0e58-9d7c4d5a8f92"),
-                            Apellido = "Gómez",
-                            Email = "maria.gomez@example.com",
-                            Nombre = "María",
-                            Tipo = "Administrador"
-                        });
+                    b.ToTable("Usuarios", (string)null);
                 });
 
             modelBuilder.Entity("Ecommerce.Models.Wishlist", b =>
@@ -136,15 +104,6 @@ namespace Ecommerce.Data.Migrations
                 });
 
             modelBuilder.Entity("Ecommerce.Models.Producto", b =>
-                {
-                    b.HasOne("Ecommerce.Models.Wishlist", "Wishlist")
-                        .WithMany()
-                        .HasForeignKey("WishlistId");
-
-                    b.Navigation("Wishlist");
-                });
-
-            modelBuilder.Entity("Ecommerce.Models.Usuario", b =>
                 {
                     b.HasOne("Ecommerce.Models.Wishlist", "Wishlist")
                         .WithMany()

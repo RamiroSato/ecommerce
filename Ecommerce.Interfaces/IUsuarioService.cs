@@ -5,7 +5,7 @@ namespace Ecommerce.Interfaces
 {
     public interface IUsuarioService
     {
-        void AddUsuario(Usuario usuario);
+        Task<Usuario> AddUsuario(Usuario usuario);
 
         Task<Usuario> GetUsuario(Guid id);
 

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 
 namespace Ecommerce.Models
 {
@@ -12,16 +7,28 @@ namespace Ecommerce.Models
 
         public Guid Id { get; set; } = Guid.NewGuid();
 
-        public string Nombre { get; set; } = string.Empty;
+        public string? Nombre { get; set; } 
 
-        public string Apellido { get; set; } = string.Empty ;
+        public string? Apellido { get; set; } 
 
-        public string Password { get; set; } = string.Empty;
+        public string? Password { get; set; } 
 
-        public string Email { get; set; } = string.Empty;
+        public string? Email { get; set; } 
+        public string? Tipo { get; set; }
 
-        public string Tipo { get; set; } = string.Empty;
+        public int IsActive { get; set; } = 1;
 
-        
+        public DateTime CreatedOn { get; set; } = DateTime.Now;
+
+        public Usuario( string nombre, string apellido, string password, string email, string tipo)
+        {            
+            Nombre = nombre;
+            Apellido = apellido;
+            Password = password;
+            Email = email;
+            Tipo = tipo;
+        }
+
+        public Usuario() { }
     }
 }

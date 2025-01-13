@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Ecommerce.Data.Migrations
 {
     [DbContext(typeof(EcommerceContext))]
-    [Migration("20250109220733_Se modifica la tabla de usuario ")]
-    partial class Semodificalatabladeusuario
+    [Migration("20250113125509_Adding-seeds")]
+    partial class Addingseeds
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -54,24 +54,6 @@ namespace Ecommerce.Data.Migrations
                     b.HasIndex("WishlistId");
 
                     b.ToTable("Productos");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("11111111-1111-1111-1111-111111111111"),
-                            Categoria = "Remeras",
-                            Descripcion = "La chomba Lacoste blanca es un ícono de elegancia casual...",
-                            Precio = 60000,
-                            Titulo = "Chomba Lacoste Blanca"
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-222222222222"),
-                            Categoria = "Pantalones",
-                            Descripcion = "Los jeans Levi's azul son un básico imprescindible...",
-                            Precio = 100000,
-                            Titulo = "Jeans Levi's Azul"
-                        });
                 });
 
             modelBuilder.Entity("Ecommerce.Models.Usuario", b =>
@@ -84,9 +66,15 @@ namespace Ecommerce.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("IsActive")
+                        .HasColumnType("int");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
@@ -97,30 +85,33 @@ namespace Ecommerce.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Tipo")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Usuarios", (string)null);
+                    b.ToTable("usuarios", (string)null);
 
                     b.HasData(
                         new
                         {
-                            Id = new Guid("f1a4d5a6-7c2b-4eab-9e47-8c6b3f4c7f81"),
+                            Id = new Guid("83b00b1f-e914-4b30-8911-0ae9e3af68a3"),
                             Apellido = "Pérez",
+                            CreatedOn = new DateTime(2025, 1, 13, 9, 55, 8, 508, DateTimeKind.Local).AddTicks(5296),
                             Email = "juan.perez@example.com",
+                            IsActive = 1,
                             Nombre = "Juan",
-                            Password = "",
+                            Password = "asdasdasd",
                             Tipo = "Cliente"
                         },
                         new
                         {
-                            Id = new Guid("f2b5d6a7-8d3c-5fab-0e58-9d7c4d5a8f92"),
+                            Id = new Guid("ba381ad0-e082-4a91-86b6-27d408aa2509"),
                             Apellido = "Gómez",
+                            CreatedOn = new DateTime(2025, 1, 13, 9, 55, 8, 510, DateTimeKind.Local).AddTicks(4874),
                             Email = "maria.gomez@example.com",
+                            IsActive = 1,
                             Nombre = "María",
-                            Password = "",
+                            Password = "kjsdfgk123123",
                             Tipo = "Administrador"
                         });
                 });

@@ -2,11 +2,6 @@
 using Ecommerce.Interfaces;
 using Ecommerce.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 
 namespace Ecommerce.Services
@@ -16,51 +11,52 @@ namespace Ecommerce.Services
     {
 
         private readonly EcommerceContext _context;
-
+                     
 
         public UsuarioService(EcommerceContext context)
         {
-            _context = context;
+            _context = context ?? throw new ArgumentNullException(nameof(context)); 
         }
 
 
-        public void AddUsuario(Usuario usuario) 
-        {
 
-            _context.usuarios.Add(usuario);
-            _context.SaveChanges();
-        
+        public async Task<Usuario> AddUsuario(Usuario usuario)
+        {
+            
+            await _context.usuarios.AddAsync(usuario);
+            await _context.SaveChangesAsync();
+            return usuario;
         }
 
         public async Task<Usuario> GetUsuario(Guid id) 
         {
 
-            return await _context.Usuarios.FirstOrDefaultAsync(u => id == u.Id);
+            return await _context.usuarios.FirstOrDefaultAsync(u => id == u.Id);
         
         }
 
         public async Task<List<Usuario>> GetUsuarios() 
         {
         
-            return await _context.Usuarios.ToListAsync();
+            return await _context.usuarios.ToListAsync();
         
         }
 
         public async Task<Usuario> GetUsuarioByEmail(string email) 
         {
 
-            return await _context.Usuarios.FirstOrDefaultAsync(u => email == u.Email);
+            return await _context.usuarios.FirstOrDefaultAsync(u => email == u.Email);
         
         }
 
         public async Task<bool> DeleteUsuario(Guid id) 
         {
 
-            var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.Id == id);
+            var usuario = await _context.usuarios.FirstOrDefaultAsync(u => u.Id == id);
             if (usuario == null)
                 return false;
 
-            _context.Usuarios.Remove(usuario);
+            _context.usuarios.Remove(usuario);
             await _context.SaveChangesAsync();
             return true;
 
@@ -68,18 +64,21 @@ namespace Ecommerce.Services
 
         public async Task<bool> UpdateUsuario(Usuario usuario)
         {
-            var existingUsuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.Id == usuario.Id);
-            if (existingUsuario == null)
-                return false;
+            var usuarioExistente = await _context.usuarios.FirstOrDefaultAsync(u => u.Id == usuario.Id);
+            
+             if(usuarioExistente != null) { 
 
-            existingUsuario.Nombre = usuario.Nombre;
-            existingUsuario.Apellido = usuario.Apellido;
-            existingUsuario.Password = usuario.Password;
-            existingUsuario.Email = usuario.Email;
-            existingUsuario.Tipo = usuario.Tipo;
+            usuarioExistente.Nombre = usuario.Nombre;
+            usuarioExistente.Apellido = usuario.Apellido;
+            usuarioExistente.Password = usuario.Password;
+            usuarioExistente.Email = usuario.Email;
+            usuarioExistente.Tipo = usuario.Tipo;
 
-            await _context.SaveChangesAsync();
-            return true;
+             await _context.SaveChangesAsync();
+             return true;
+            }
+
+            return false;
         }
 
     }

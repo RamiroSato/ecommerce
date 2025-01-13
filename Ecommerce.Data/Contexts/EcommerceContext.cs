@@ -1,11 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Ecommerce.Models;
 using Ecommerce.Data.Contexts.Seeds;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace Ecommerce.Data.Contexts
 {
@@ -14,13 +10,13 @@ namespace Ecommerce.Data.Contexts
         #region Atributos
         public DbSet<Producto>? productos;
 
-        public DbSet<Usuario>? usuarios;
+        public DbSet<Usuario> usuarios { get; set; }
         #endregion 
 
         #region Propiedades
         public DbSet<Producto>? Productos => productos;
 
-        public DbSet<Usuario>? Usuarios => usuarios; 
+        //public DbSet<Usuario> Usuarios => usuarios; 
         #endregion
 
         #region Constructor
@@ -42,20 +38,24 @@ namespace Ecommerce.Data.Contexts
 
             modelBuilder.Entity<Usuario>(u =>
             {
-                u.ToTable("Usuarios");
+                u.ToTable("usuarios");
                 u.HasKey(u => u.Id);
                 u.Property(u => u.Id).ValueGeneratedOnAdd();
-                u.Property(u => u.Nombre);
-                u.Property(u => u.Apellido);
-                u.Property(u => u.Password);
-                u.Property(u => u.Email);
+                u.Property(u => u.Nombre).IsRequired();
+                u.Property(u => u.Apellido).IsRequired();
+                u.Property(u => u.Password).IsRequired();
+                u.Property(u => u.Email).IsRequired();
+                u.Property(u => u.IsActive).IsRequired();
+                u.Property(u => u.CreatedOn);
 
 
             });
 
             modelBuilder.ApplyConfiguration(new UsuarioSeed());
-            modelBuilder.ApplyConfiguration(new ProductoSeed());
+            //modelBuilder.ApplyConfiguration(new ProductoSeed());
         }
         #endregion
+
+       
     }
 }
