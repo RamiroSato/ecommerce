@@ -88,14 +88,8 @@ namespace Ecommerce.API.Controllers
             try
             {
                 var usuario = new Usuario();
-
-                if (_usuarioService.GetUsuario(id) != null)
-                {
-                    usuario = await _usuarioService.GetUsuario(id);
-                    await _usuarioService.DeleteUsuario(id);
-                }
-
-
+                usuario = await _usuarioService.GetUsuario(id);
+                await _usuarioService.DeleteUsuario(id);                
                 return Ok(usuario);
 
             }
@@ -107,30 +101,28 @@ namespace Ecommerce.API.Controllers
             }
         
         }
-        //Siempre sale por el catch
         [HttpPut("id")]
-        public async Task<IActionResult> ModificarUsuario(Guid id, UsuarioDto usuario) 
+        public async Task<IActionResult> ModificarUsuario(Guid id, UsuarioDto usuario)
         {
             try
             {
-              
-                if (_usuarioService.GetUsuario(id) != null)
+                var resultado = await _usuarioService.UpdateUsuario(usuario.UsuarioDtoAUsuario());
+                if (!resultado)
                 {
-                     await _usuarioService.UpdateUsuario(usuario.UsuarioDtoAUsuario());
-                     
+                    return NotFound(new { Message = $"El id '{id}' no corresponde a ningún usuario en la base de datos." });
                 }
-
-               return Ok(usuario);
-
+                return Ok(usuario);
             }
-            catch
+            catch (KeyNotFoundException ex)
             {
-
-                return NotFound(new { Message = $"El id '{id}' no corresponde a ningún usuario en la base de datos." });
-
+                return NotFound(new { Message = ex.Message });
             }
-
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "Error interno del servidor", Details = ex.Message });
+            }
         }
+
 
 
 

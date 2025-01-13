@@ -64,21 +64,22 @@ namespace Ecommerce.Services
 
         public async Task<bool> UpdateUsuario(Usuario usuario)
         {
-            var usuarioExistente = await _context.usuarios.FirstOrDefaultAsync(u => u.Id == usuario.Id);
-            
-             if(usuarioExistente != null) { 
+            var usuarioUpdate = await _context.usuarios.FirstOrDefaultAsync(u => u.Id == usuario.Id);
 
-            usuarioExistente.Nombre = usuario.Nombre;
-            usuarioExistente.Apellido = usuario.Apellido;
-            usuarioExistente.Password = usuario.Password;
-            usuarioExistente.Email = usuario.Email;
-            usuarioExistente.Tipo = usuario.Tipo;
-
-             await _context.SaveChangesAsync();
-             return true;
+            if (usuarioUpdate == null)
+            {
+                // Lanzar una excepción personalizada si no se encuentra el usuario
+                throw new KeyNotFoundException($"Usuario con ID {usuario.Id} no encontrado.");
             }
 
-            return false;
+            usuarioUpdate.Nombre = usuario.Nombre;
+            usuarioUpdate.Apellido = usuario.Apellido;
+            usuarioUpdate.Password = usuario.Password;
+            usuarioUpdate.Email = usuario.Email;
+            usuarioUpdate.Tipo = usuario.Tipo;
+
+            await _context.SaveChangesAsync();
+            return true;
         }
 
     }
