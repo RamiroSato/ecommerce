@@ -10,7 +10,8 @@ namespace Ecommerce.Data.Contexts.Seeds
         {
             builder.HasData(
                 new Producto { 
-                    Id = Guid.Parse("11111111-1111-1111-1111-111111111111"), Titulo = "Chomba Lacoste Blanca", 
+                    Id = Guid.Parse("11111111-1111-1111-1111-111111111111"), 
+                    Titulo = "Chomba Lacoste Blanca", 
                     Categoria = "Remeras", 
                     Descripcion = "La chomba Lacoste blanca es un ícono de elegancia casual. Confeccionada en algodón premium, ofrece una textura suave y transpirable, perfecta para cualquier ocasión. Su diseño clásico incluye el emblemático logo del cocodrilo bordado en el pecho, cuello tipo polo con botones ajustables y un ajuste regular que se adapta cómodamente a diferentes tipos de cuerpo.", 
                     Precio = 60000 },

@@ -28,10 +28,10 @@ namespace Ecommerce.Data.Contexts
             {
                 p.HasKey(p => p.Id);
                 p.Property(p => p.Id).ValueGeneratedOnAdd();
-                p.Property(p => p.Titulo);
-                p.Property(p => p.Categoria);
-                p.Property(p => p.Descripcion);
-                p.Property(p => p.Precio);
+                p.Property(p => p.Titulo).IsRequired();
+                p.Property(p => p.Categoria).IsRequired();
+                p.Property(p => p.Descripcion).IsRequired();
+                p.Property(p => p.Precio).IsRequired();
                 p.HasMany(p => p.Wishlists)
                 .WithMany(w => w.Productos);
             });
