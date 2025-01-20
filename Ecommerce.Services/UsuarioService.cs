@@ -22,10 +22,25 @@ namespace Ecommerce.Services
 
         public async Task<Usuario> AddUsuario(Usuario usuario)
         {
-            
-            await _context.usuarios.AddAsync(usuario);
-            await _context.SaveChangesAsync();
-            return usuario;
+            if (usuario == null)
+                throw new ArgumentNullException(nameof(usuario));
+
+            try
+            {
+                await _context.usuarios.AddAsync(usuario);
+                await _context.SaveChangesAsync();
+                return usuario;
+            }
+            catch (DbUpdateException ex)
+            {
+                // Captura detalles específicos de la base de datos
+                throw new Exception("Error al guardar el usuario en la base de datos", ex);
+            }
+            catch (Exception ex)
+            {
+                // Captura otros errores
+                throw new Exception("Ocurrió un error inesperado", ex);
+            }
         }
 
         public async Task<Usuario> GetUsuario(Guid id) 

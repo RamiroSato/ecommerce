@@ -11,7 +11,32 @@ namespace Ecommerce.Models.Dtos.DtoMappers
         public static Usuario UsuarioDtoAUsuario(this UsuarioDto dto) 
         {
 
-            return new Usuario(dto.Nombre, dto.Apellido, dto.Password, dto.Email, dto.Tipo);
+            return new Usuario
+            {
+
+                Nombre = dto.Nombre,
+                Apellido = dto.Apellido,
+                Password = dto.Password,
+                Email = dto.Email,
+                Tipo = dto.Tipo,
+                IsActive = 1
+
+            };
+        
+        }
+
+        public static GetUsuarioDto usuarioADto(this Usuario usuario) 
+        {
+
+            return new GetUsuarioDto
+            {
+
+                Nombre = usuario.Nombre,
+                Apellido = usuario.Apellido,
+                Email = usuario.Email,
+                IsActive = usuario.IsActive
+
+            };
         
         }
 

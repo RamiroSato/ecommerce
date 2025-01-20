@@ -4,6 +4,7 @@ using Ecommerce.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Ecommerce.Data.Migrations
 {
     [DbContext(typeof(EcommerceContext))]
-    partial class EcommerceContextModelSnapshot : ModelSnapshot
+    [Migration("20250116171756_Usuario-First-Migraton")]
+    partial class UsuarioFirstMigraton
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,7 +48,7 @@ namespace Ecommerce.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Productos", (string)null);
+                    b.ToTable("Productos");
 
                     b.HasData(
                         new
@@ -80,11 +83,6 @@ namespace Ecommerce.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(1);
-
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -106,7 +104,6 @@ namespace Ecommerce.Data.Migrations
                             Id = new Guid("11111111-1111-1111-1111-111111111111"),
                             Apellido = "Pérez",
                             Email = "juan.perez@example.com",
-                            IsActive = 0,
                             Nombre = "Juan",
                             Password = "asdasdasd",
                             Tipo = "Cliente"
@@ -116,7 +113,6 @@ namespace Ecommerce.Data.Migrations
                             Id = new Guid("22222222-2222-2222-2222-222222222222"),
                             Apellido = "Gómez",
                             Email = "maria.gomez@example.com",
-                            IsActive = 0,
                             Nombre = "María",
                             Password = "kjsdfgk123123",
                             Tipo = "Administrador"
@@ -126,7 +122,6 @@ namespace Ecommerce.Data.Migrations
                             Id = new Guid("33333333-3333-3333-3333-333333333333"),
                             Apellido = "Lorefice",
                             Email = "nicolaslorefice@gmail.com",
-                            IsActive = 0,
                             Nombre = "Nicolas",
                             Password = "Abcde123",
                             Tipo = "Cliente"

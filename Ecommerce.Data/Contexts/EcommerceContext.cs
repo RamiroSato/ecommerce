@@ -45,13 +45,13 @@ namespace Ecommerce.Data.Contexts
                 u.Property(u => u.Apellido).IsRequired();
                 u.Property(u => u.Password).IsRequired();
                 u.Property(u => u.Email).IsRequired();
-                u.Property(u => u.IsActive).IsRequired();
-                u.Property(u => u.CreatedOn);
+                u.Property(u => u.IsActive);
+                
 
 
             });
 
-            modelBuilder.ApplyConfiguration(new UsuarioSeed());
+            //modelBuilder.ApplyConfiguration(new UsuarioSeed());
             //modelBuilder.ApplyConfiguration(new ProductoSeed());
         }
         #endregion

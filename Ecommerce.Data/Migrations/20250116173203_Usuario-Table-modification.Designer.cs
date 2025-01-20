@@ -4,6 +4,7 @@ using Ecommerce.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Ecommerce.Data.Migrations
 {
     [DbContext(typeof(EcommerceContext))]
-    partial class EcommerceContextModelSnapshot : ModelSnapshot
+    [Migration("20250116173203_Usuario-Table-modification")]
+    partial class UsuarioTablemodification
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,25 +48,7 @@ namespace Ecommerce.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Productos", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("11111111-1111-1111-1111-111111111111"),
-                            Categoria = "Remeras",
-                            Descripcion = "La chomba Lacoste blanca es un ícono de elegancia casual...",
-                            Precio = 60000,
-                            Titulo = "Chomba Lacoste Blanca"
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-222222222222"),
-                            Categoria = "Pantalones",
-                            Descripcion = "Los jeans Levi's azul son un básico imprescindible...",
-                            Precio = 100000,
-                            Titulo = "Jeans Levi's Azul"
-                        });
+                    b.ToTable("Productos");
                 });
 
             modelBuilder.Entity("Ecommerce.Models.Usuario", b =>
@@ -99,38 +84,6 @@ namespace Ecommerce.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Usuarios", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("11111111-1111-1111-1111-111111111111"),
-                            Apellido = "Pérez",
-                            Email = "juan.perez@example.com",
-                            IsActive = 0,
-                            Nombre = "Juan",
-                            Password = "asdasdasd",
-                            Tipo = "Cliente"
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-222222222222"),
-                            Apellido = "Gómez",
-                            Email = "maria.gomez@example.com",
-                            IsActive = 0,
-                            Nombre = "María",
-                            Password = "kjsdfgk123123",
-                            Tipo = "Administrador"
-                        },
-                        new
-                        {
-                            Id = new Guid("33333333-3333-3333-3333-333333333333"),
-                            Apellido = "Lorefice",
-                            Email = "nicolaslorefice@gmail.com",
-                            IsActive = 0,
-                            Nombre = "Nicolas",
-                            Password = "Abcde123",
-                            Tipo = "Cliente"
-                        });
                 });
 #pragma warning restore 612, 618
         }

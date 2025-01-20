@@ -3,6 +3,7 @@ using Ecommerce.Models;
 using Ecommerce.Models.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Ecommerce.Models.Dtos.DtoMappers;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace Ecommerce.API.Controllers
@@ -26,12 +27,18 @@ namespace Ecommerce.API.Controllers
         {
             try
             {
+                //Intenta crear el usuario
                 var usuarioCreado = await _usuarioService.AddUsuario(usuario.UsuarioDtoAUsuario());
-                return Ok(usuarioCreado);
+                //Si todo sale bien, devuelve un 200 con el usuario creado recientemente
+                return Ok(usuarioCreado.usuarioADto());
             }
-            catch
+            catch (DbUpdateException ex)
             {
-                return BadRequest("No se pudo agregar el usuario");
+                return BadRequest(new { Error = "Error al guardar los datos en la base de datos", Details = ex.InnerException?.Message ?? ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Error = "Ocurrió un error al procesar la solicitud", Details = ex.Message });
             }
         }
 
