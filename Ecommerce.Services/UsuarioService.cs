@@ -46,32 +46,81 @@ namespace Ecommerce.Services
         public async Task<Usuario> GetUsuario(Guid id) 
         {
 
-            return await _context.usuarios.FirstOrDefaultAsync(u => id == u.Id);
-        
+            try 
+            {
+
+                return await _context.usuarios.FirstOrDefaultAsync(u => id == u.Id);
+
+            }
+            catch (DbUpdateException ex)
+            {
+                // Captura detalles específicos de la base de datos
+                throw new Exception("Error al guardar el usuario en la base de datos", ex);
+            }
+            catch (Exception ex)
+            {
+                // Captura otros errores
+                throw new Exception("Ocurrió un error inesperado", ex);
+            }
+
         }
 
         public async Task<List<Usuario>> GetUsuarios() 
         {
-        
-            return await _context.usuarios.ToListAsync();
-        
+            try 
+            {
+                //intenta retornar la lista de usuarios
+                return await _context.usuarios.ToListAsync();
+
+            }
+            catch (DbUpdateException ex)
+            {
+                // Captura detalles específicos de la base de datos
+                throw new Exception("Error al guardar el usuario en la base de datos", ex);
+            }
+            catch (Exception ex)
+            {
+                // Captura otros errores
+                throw new Exception("Ocurrió un error inesperado", ex);
+            }
+
         }
 
         public async Task<Usuario> GetUsuarioByEmail(string email) 
         {
 
-            return await _context.usuarios.FirstOrDefaultAsync(u => email == u.Email);
-        
+            try 
+            {
+                //Intenta retornar el usuario del email correspondiente
+                return await _context.usuarios.FirstOrDefaultAsync(u => email == u.Email);
+
+            }
+            catch (DbUpdateException ex)
+            {
+                // Captura detalles específicos de la base de datos
+                throw new Exception("Error al guardar el usuario en la base de datos", ex);
+            }
+            catch (Exception ex)
+            {
+                // Captura otros errores
+                throw new Exception("Ocurrió un error inesperado", ex);
+            }
+
         }
 
         public async Task<bool> DeleteUsuario(Guid id) 
         {
-
+            //Busca el usuario en la base de datos
             var usuario = await _context.usuarios.FirstOrDefaultAsync(u => u.Id == id);
+
+            //Si no lo encuentra devuelve false 
             if (usuario == null)
                 return false;
 
+            //Si el usuario existe en la base de datos lo elimina
             _context.usuarios.Remove(usuario);
+
+            //Se guardan los cambios en la base de datos y devuelve true
             await _context.SaveChangesAsync();
             return true;
 
@@ -79,20 +128,24 @@ namespace Ecommerce.Services
 
         public async Task<bool> UpdateUsuario(Guid id, Usuario usuario)
         {
+            //Busca el usuario en la base de datos
             var usuarioUpdate = await _context.usuarios.FirstOrDefaultAsync(u => u.Id == id);
 
+            //Si no lo encuentra se encarga de manejar el error
             if (usuarioUpdate == null)
             {
                 // Lanzar una excepción personalizada si no se encuentra el usuario
                 throw new KeyNotFoundException($"Usuario con ID {usuario.Id} no encontrado.");
             }
 
+            //Si el usuario existe lo modifica y devuelve verdadero
             usuarioUpdate.Nombre = usuario.Nombre;
-            usuarioUpdate.Apellido = usuario.Apellido;
-            usuarioUpdate.Password = usuario.Password;
+            usuarioUpdate.Apellido = usuario.Apellido;           
             usuarioUpdate.Email = usuario.Email;
-            usuarioUpdate.Tipo = usuario.Tipo;
 
+            //usuarioUpdate.Tipo = usuario.Tipo;//Se tiene que poder cambiar de rol?
+            //usuarioUpdate.Password = usuario.Password;//Cambiar de lugar la forma de modificar la contraseña 
+            //Guarda los cambios en la base de datos
             await _context.SaveChangesAsync();
             return true;
         }

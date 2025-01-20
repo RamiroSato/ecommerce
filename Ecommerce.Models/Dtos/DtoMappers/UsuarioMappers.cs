@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 
 namespace Ecommerce.Models.Dtos.DtoMappers
 {
@@ -18,8 +14,8 @@ namespace Ecommerce.Models.Dtos.DtoMappers
                 Apellido = dto.Apellido,
                 Password = dto.Password,
                 Email = dto.Email,
-                Tipo = dto.Tipo,
-                IsActive = 1
+                Rol = dto.Rol,
+                IsActive = true
 
             };
         
