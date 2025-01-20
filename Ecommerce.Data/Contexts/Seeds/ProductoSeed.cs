@@ -1,6 +1,6 @@
 ﻿using Ecommerce.Models;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Ecommerce.Data.Contexts.Seeds
 {

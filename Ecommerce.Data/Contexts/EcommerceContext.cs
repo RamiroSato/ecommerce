@@ -1,11 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Ecommerce.Models;
 using Ecommerce.Data.Contexts.Seeds;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace Ecommerce.Data.Contexts
 {
@@ -36,9 +32,28 @@ namespace Ecommerce.Data.Contexts
                 .WithMany(w => w.Productos);
             });
 
+            modelBuilder.Entity<Usuario>(u =>
+            {
+                u.ToTable("usuarios");
+                u.HasKey(u => u.Id);
+                u.Property(u => u.Id).ValueGeneratedOnAdd();
+                u.Property(u => u.Nombre).IsRequired();
+                u.Property(u => u.Apellido).IsRequired();
+                u.Property(u => u.Password).IsRequired();
+                u.Property(u => u.Email).IsRequired();
+                u.Property(u => u.IsActive).IsRequired();
+                u.Property(u => u.CreatedOn);
+
+
+            });
+
+            modelBuilder.ApplyConfiguration(new UsuarioSeed());
+            //modelBuilder.ApplyConfiguration(new ProductoSeed());
             modelBuilder.ApplyConfiguration(new ProductoSeed());
             #endregion
         }
         #endregion
+
+       
     }
 }
