@@ -1,11 +1,12 @@
 ﻿using Ecommerce.Models;
+using Ecommerce.Models.Dtos;
 
 
 namespace Ecommerce.Interfaces
 {
     public interface IUsuarioService
     {
-        Task<Usuario> AddUsuario(Usuario usuario);
+        Task<Usuario> AddUsuario(UsuarioDto usuario);
 
         Task<Usuario> GetUsuario(Guid id);
 

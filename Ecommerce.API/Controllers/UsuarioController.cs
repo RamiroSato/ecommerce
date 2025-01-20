@@ -11,7 +11,6 @@ namespace Ecommerce.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [EnableCors("AllowAll")]
     public class UsuarioController : Controller
     {
         private readonly IUsuarioService _usuarioService;
@@ -30,7 +29,7 @@ namespace Ecommerce.API.Controllers
             try
             {
                 //Intenta crear el usuario
-                var usuarioCreado = await _usuarioService.AddUsuario(usuario.UsuarioDtoAUsuario());
+                var usuarioCreado = await _usuarioService.AddUsuario(usuario);
 
                 //Si todo sale bien, devuelve un ok con el usuario creado recientemente
                 return Ok(usuarioCreado.usuarioADto());

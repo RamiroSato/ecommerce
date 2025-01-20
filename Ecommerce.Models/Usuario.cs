@@ -12,7 +12,7 @@ namespace Ecommerce.Models
         public string Apellido { get; set; } 
         public string Password { get; set; } 
         public string Email { get; set; }         
-        public bool IsActive { get; set; }
+        public bool Activo { get; set; }
         public DateTime FechaAlta { get; set; }
 
 

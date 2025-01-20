@@ -31,7 +31,7 @@ namespace Ecommerce.Models.Dtos.DtoMappers
                 Nombre = usuario.Nombre,
                 Apellido = usuario.Apellido,
                 Email = usuario.Email,
-                IsActive = usuario.IsActive
+                IsActive = usuario.Activo
 
 
             };

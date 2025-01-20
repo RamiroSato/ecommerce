@@ -11,17 +11,46 @@ namespace Ecommerce.Data.Contexts
 
         DbSet<Usuario>? usuarios;
         DbSet<Roles>? roles;
-
         DbSet<Producto>? productos;
 
-        
-        #endregion 
+
+        #endregion
 
         #region Propiedades
-        public DbSet<Producto>? Productos => productos;
-        public DbSet<Usuario>? Usuarios => usuarios;
-        public DbSet<Roles>? Roles => Roles;
-        
+        public DbSet<Producto> Productos
+        {
+            get
+            {
+                if (productos == null)
+                    throw new Exception("No existe productos");
+                return productos;
+            }
+            set => productos = value;
+        }
+
+        public DbSet<Usuario> Usuarios
+        {
+            get
+            {
+                if (usuarios == null)
+                    throw new Exception("No existe usuarios");
+                return usuarios;
+            }
+            set => usuarios = value;
+        }
+
+        public DbSet<Roles> Roles
+        {
+            get
+            {
+                if (roles == null)
+                    throw new Exception("No existe roles");
+
+                return roles;
+            }
+            set => roles = value;
+        }
+
         #endregion
 
         #region Constructor
@@ -51,7 +80,7 @@ namespace Ecommerce.Data.Contexts
 
             modelBuilder.Entity<Usuario>(u =>
             {
-                
+
                 u.HasKey(u => u.Id);
                 u.Property(u => u.Id).ValueGeneratedOnAdd();
 
@@ -61,11 +90,11 @@ namespace Ecommerce.Data.Contexts
                 u.Property(u => u.Apellido).IsRequired();
                 u.Property(u => u.Password).IsRequired();
                 u.Property(u => u.Email).IsRequired();
-                u.Property(u => u.IsActive).HasDefaultValue(true);
-                u.Property(u => u.FechaAlta).IsRequired().HasDefaultValueSql("GETDATE()");                
-                
+                u.Property(u => u.Activo).HasDefaultValue(true);
+                u.Property(u => u.FechaAlta).IsRequired().HasDefaultValueSql("GETDATE()");
 
-            });            
+
+            });
 
             modelBuilder.Entity<Producto>(p =>
             {
@@ -84,6 +113,6 @@ namespace Ecommerce.Data.Contexts
         }
         #endregion
 
-       
+
     }
 }

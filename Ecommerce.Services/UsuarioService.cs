@@ -1,6 +1,7 @@
 ﻿using Ecommerce.Data.Contexts;
 using Ecommerce.Interfaces;
 using Ecommerce.Models;
+using Ecommerce.Models.Dtos;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -11,32 +12,41 @@ namespace Ecommerce.Services
     {
 
         private readonly EcommerceContext _context;
-                     
+
 
         public UsuarioService(EcommerceContext context)
         {
-            _context = context ?? throw new ArgumentNullException(nameof(context)); 
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task<Usuario> AddUsuario(Usuario usuario)
+        public async Task<Usuario> AddUsuario(UsuarioDto usuarioDto)
         {
-            if (usuario == null)
-                throw new ArgumentNullException(nameof(usuario));
+            if (usuarioDto == null)
+                throw new ArgumentNullException(nameof(usuarioDto));
 
             try
             {
+                var usuarioToAdd = new Usuario()
+                {
+                    IdRol = usuarioDto.IdRol,
+                    Nombre = usuarioDto.Nombre,
+                    Apellido = usuarioDto.Apellido,
+                    Password = usuarioDto.Password,
+                    Email = usuarioDto.Email,
+                    Activo = true
+                };
+
                 // Busca el rol existente en la base de datos
-                var rolExistente = await _context.Roles.FirstOrDefaultAsync(r => r.Id == usuario.IdRol);
+
+                Roles? rolExistente = await _context.Roles.FindAsync(usuarioDto.IdRol);
 
                 if (rolExistente == null)
-                    throw new Exception($"El rol con Id {usuario.IdRol} no existe.");
+                    throw new Exception($"El rol con Id {usuarioDto.IdRol} no existe.");
 
-                // Asocia el rol existente al usuario
-                usuario.Rol = rolExistente;
 
-                await _context.Usuarios.AddAsync(usuario);
+                await _context.Usuarios.AddAsync(usuarioToAdd);
                 await _context.SaveChangesAsync();
-                return usuario;
+                return usuarioToAdd;
             }
             catch (DbUpdateException ex)
             {
@@ -48,10 +58,10 @@ namespace Ecommerce.Services
             }
         }
 
-        public async Task<Usuario> GetUsuario(Guid id) 
+        public async Task<Usuario> GetUsuario(Guid id)
         {
 
-            try 
+            try
             {
 
                 return await _context.Usuarios.FirstOrDefaultAsync(u => id == u.Id);
@@ -70,9 +80,9 @@ namespace Ecommerce.Services
 
         }
 
-        public async Task<List<Usuario>> GetUsuarios() 
+        public async Task<List<Usuario>> GetUsuarios()
         {
-            try 
+            try
             {
                 //intenta retornar la lista de usuarios
                 return await _context.Usuarios.ToListAsync();
@@ -91,10 +101,10 @@ namespace Ecommerce.Services
 
         }
 
-        public async Task<Usuario> GetUsuarioByEmail(string email) 
+        public async Task<Usuario> GetUsuarioByEmail(string email)
         {
 
-            try 
+            try
             {
                 //Intenta retornar el usuario del email correspondiente
                 return await _context.Usuarios.FirstOrDefaultAsync(u => email == u.Email);
@@ -113,7 +123,7 @@ namespace Ecommerce.Services
 
         }
 
-        public async Task<bool> DeleteUsuario(Guid id) 
+        public async Task<bool> DeleteUsuario(Guid id)
         {
             //Busca el usuario en la base de datos
             var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.Id == id);
@@ -145,7 +155,7 @@ namespace Ecommerce.Services
 
             //Si el usuario existe lo modifica y devuelve verdadero
             usuarioUpdate.Nombre = usuario.Nombre;
-            usuarioUpdate.Apellido = usuario.Apellido;           
+            usuarioUpdate.Apellido = usuario.Apellido;
             usuarioUpdate.Email = usuario.Email;
 
             //usuarioUpdate.Tipo = usuario.Tipo;//Se tiene que poder cambiar de rol?

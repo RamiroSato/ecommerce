@@ -20,17 +20,6 @@ builder.Services.AddDbContext<EcommerceContext>(options =>
         b => b.MigrationsAssembly("Ecommerce.Data") // Ensamblado de migraciones
     )
 );
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowSpecificOrigins", policy =>
-    {
-        policy.WithOrigins("http://localhost:44378") // Cambia esto a tu dominio
-              .AllowAnyHeader()
-              .AllowAnyMethod();
-    });
-});
-
-
 
 var app = builder.Build();
 
@@ -56,8 +45,6 @@ using (var scope = app.Services.CreateScope())
 };
 
 app.UseHttpsRedirection();
-
-app.UseCors("AllowAll");
 
 app.UseAuthorization();
 
