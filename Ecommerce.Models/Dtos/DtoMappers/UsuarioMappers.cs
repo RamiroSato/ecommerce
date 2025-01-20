@@ -1,5 +1,7 @@
 ﻿
 
+using System.Net.Http.Headers;
+
 namespace Ecommerce.Models.Dtos.DtoMappers
 {
     public static class UsuarioMappers
@@ -14,9 +16,8 @@ namespace Ecommerce.Models.Dtos.DtoMappers
                 Apellido = dto.Apellido,
                 Password = dto.Password,
                 Email = dto.Email,
-                Rol = dto.Rol,
-                IsActive = true
-
+                IdRol = dto.IdRol,
+                
             };
         
         }
@@ -31,6 +32,7 @@ namespace Ecommerce.Models.Dtos.DtoMappers
                 Apellido = usuario.Apellido,
                 Email = usuario.Email,
                 IsActive = usuario.IsActive
+
 
             };
         

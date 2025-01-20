@@ -18,8 +18,6 @@ namespace Ecommerce.Services
             _context = context ?? throw new ArgumentNullException(nameof(context)); 
         }
 
-
-
         public async Task<Usuario> AddUsuario(Usuario usuario)
         {
             if (usuario == null)
@@ -27,18 +25,25 @@ namespace Ecommerce.Services
 
             try
             {
-                await _context.usuarios.AddAsync(usuario);
+                // Busca el rol existente en la base de datos
+                var rolExistente = await _context.Roles.FirstOrDefaultAsync(r => r.Id == usuario.IdRol);
+
+                if (rolExistente == null)
+                    throw new Exception($"El rol con Id {usuario.IdRol} no existe.");
+
+                // Asocia el rol existente al usuario
+                usuario.Rol = rolExistente;
+
+                await _context.Usuarios.AddAsync(usuario);
                 await _context.SaveChangesAsync();
                 return usuario;
             }
             catch (DbUpdateException ex)
             {
-                // Captura detalles específicos de la base de datos
                 throw new Exception("Error al guardar el usuario en la base de datos", ex);
             }
             catch (Exception ex)
             {
-                // Captura otros errores
                 throw new Exception("Ocurrió un error inesperado", ex);
             }
         }
@@ -49,7 +54,7 @@ namespace Ecommerce.Services
             try 
             {
 
-                return await _context.usuarios.FirstOrDefaultAsync(u => id == u.Id);
+                return await _context.Usuarios.FirstOrDefaultAsync(u => id == u.Id);
 
             }
             catch (DbUpdateException ex)
@@ -70,7 +75,7 @@ namespace Ecommerce.Services
             try 
             {
                 //intenta retornar la lista de usuarios
-                return await _context.usuarios.ToListAsync();
+                return await _context.Usuarios.ToListAsync();
 
             }
             catch (DbUpdateException ex)
@@ -92,7 +97,7 @@ namespace Ecommerce.Services
             try 
             {
                 //Intenta retornar el usuario del email correspondiente
-                return await _context.usuarios.FirstOrDefaultAsync(u => email == u.Email);
+                return await _context.Usuarios.FirstOrDefaultAsync(u => email == u.Email);
 
             }
             catch (DbUpdateException ex)
@@ -111,14 +116,14 @@ namespace Ecommerce.Services
         public async Task<bool> DeleteUsuario(Guid id) 
         {
             //Busca el usuario en la base de datos
-            var usuario = await _context.usuarios.FirstOrDefaultAsync(u => u.Id == id);
+            var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.Id == id);
 
             //Si no lo encuentra devuelve false 
             if (usuario == null)
                 return false;
 
             //Si el usuario existe en la base de datos lo elimina
-            _context.usuarios.Remove(usuario);
+            _context.Usuarios.Remove(usuario);
 
             //Se guardan los cambios en la base de datos y devuelve true
             await _context.SaveChangesAsync();
@@ -129,7 +134,7 @@ namespace Ecommerce.Services
         public async Task<bool> UpdateUsuario(Guid id, Usuario usuario)
         {
             //Busca el usuario en la base de datos
-            var usuarioUpdate = await _context.usuarios.FirstOrDefaultAsync(u => u.Id == id);
+            var usuarioUpdate = await _context.Usuarios.FirstOrDefaultAsync(u => u.Id == id);
 
             //Si no lo encuentra se encarga de manejar el error
             if (usuarioUpdate == null)

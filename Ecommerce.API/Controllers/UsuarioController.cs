@@ -4,12 +4,14 @@ using Ecommerce.Models.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Ecommerce.Models.Dtos.DtoMappers;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Cors;
 
 
 namespace Ecommerce.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [EnableCors("AllowAll")]
     public class UsuarioController : Controller
     {
         private readonly IUsuarioService _usuarioService;
@@ -30,7 +32,7 @@ namespace Ecommerce.API.Controllers
                 //Intenta crear el usuario
                 var usuarioCreado = await _usuarioService.AddUsuario(usuario.UsuarioDtoAUsuario());
 
-                //Si todo sale bien, devuelve un 200 con el usuario creado recientemente
+                //Si todo sale bien, devuelve un ok con el usuario creado recientemente
                 return Ok(usuarioCreado.usuarioADto());
             }
             catch (DbUpdateException ex)
@@ -44,7 +46,6 @@ namespace Ecommerce.API.Controllers
                 return BadRequest(new { Error = "Ocurrió un error al procesar la solicitud", Details = ex.Message });
             }
         }
-
 
 
         //Metodo para mostrar toda la lista de usuarios de la Base de Datos
