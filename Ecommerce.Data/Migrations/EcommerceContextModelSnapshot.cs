@@ -43,26 +43,56 @@ namespace Ecommerce.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("WishlistId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Productos", (string)null);
+                    b.HasIndex("WishlistId");
+
+                    b.ToTable("Productos");
+                });
+
+            modelBuilder.Entity("Ecommerce.Models.Roles", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Activo")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("FechaAlta")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Roles");
 
                     b.HasData(
                         new
                         {
-                            Id = new Guid("11111111-1111-1111-1111-111111111111"),
-                            Categoria = "Remeras",
-                            Descripcion = "La chomba Lacoste blanca es un ícono de elegancia casual...",
-                            Precio = 60000,
-                            Titulo = "Chomba Lacoste Blanca"
+                            Id = 1,
+                            Activo = false,
+                            Descripcion = "Admin",
+                            FechaAlta = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
-                            Id = new Guid("22222222-2222-2222-2222-222222222222"),
-                            Categoria = "Pantalones",
-                            Descripcion = "Los jeans Levi's azul son un básico imprescindible...",
-                            Precio = 100000,
-                            Titulo = "Jeans Levi's Azul"
+                            Id = 2,
+                            Activo = false,
+                            Descripcion = "Cliente",
+                            FechaAlta = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
 
@@ -80,10 +110,18 @@ namespace Ecommerce.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("IsActive")
+                    b.Property<DateTime>("FechaAlta")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(1);
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<int>("IdRol")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<string>("Nombre")
                         .IsRequired()
@@ -93,44 +131,47 @@ namespace Ecommerce.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Tipo")
-                        .HasColumnType("nvarchar(max)");
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdRol");
+
+                    b.ToTable("Usuarios");
+                });
+
+            modelBuilder.Entity("Ecommerce.Models.Wishlist", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Usuarios", (string)null);
+                    b.ToTable("Wishlist");
+                });
 
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("11111111-1111-1111-1111-111111111111"),
-                            Apellido = "Pérez",
-                            Email = "juan.perez@example.com",
-                            IsActive = 0,
-                            Nombre = "Juan",
-                            Password = "asdasdasd",
-                            Tipo = "Cliente"
-                        },
-                        new
-                        {
-                            Id = new Guid("22222222-2222-2222-2222-222222222222"),
-                            Apellido = "Gómez",
-                            Email = "maria.gomez@example.com",
-                            IsActive = 0,
-                            Nombre = "María",
-                            Password = "kjsdfgk123123",
-                            Tipo = "Administrador"
-                        },
-                        new
-                        {
-                            Id = new Guid("33333333-3333-3333-3333-333333333333"),
-                            Apellido = "Lorefice",
-                            Email = "nicolaslorefice@gmail.com",
-                            IsActive = 0,
-                            Nombre = "Nicolas",
-                            Password = "Abcde123",
-                            Tipo = "Cliente"
-                        });
+            modelBuilder.Entity("Ecommerce.Models.Producto", b =>
+                {
+                    b.HasOne("Ecommerce.Models.Wishlist", "Wishlist")
+                        .WithMany()
+                        .HasForeignKey("WishlistId");
+
+                    b.Navigation("Wishlist");
+                });
+
+            modelBuilder.Entity("Ecommerce.Models.Usuario", b =>
+                {
+                    b.HasOne("Ecommerce.Models.Roles", "Rol")
+                        .WithMany("Usuarios")
+                        .HasForeignKey("IdRol")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Rol");
+                });
+
+            modelBuilder.Entity("Ecommerce.Models.Roles", b =>
+                {
+                    b.Navigation("Usuarios");
                 });
 #pragma warning restore 612, 618
         }

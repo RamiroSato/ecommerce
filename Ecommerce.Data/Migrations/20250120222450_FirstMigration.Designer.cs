@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Ecommerce.Data.Migrations
 {
     [DbContext(typeof(EcommerceContext))]
-    [Migration("20250113125509_Adding-seeds")]
-    partial class Addingseeds
+    [Migration("20250120222450_FirstMigration")]
+    partial class FirstMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -56,6 +56,49 @@ namespace Ecommerce.Data.Migrations
                     b.ToTable("Productos");
                 });
 
+            modelBuilder.Entity("Ecommerce.Models.Roles", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Activo")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("FechaAlta")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Roles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Activo = false,
+                            Descripcion = "Admin",
+                            FechaAlta = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Activo = false,
+                            Descripcion = "Cliente",
+                            FechaAlta = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        });
+                });
+
             modelBuilder.Entity("Ecommerce.Models.Usuario", b =>
                 {
                     b.Property<Guid>("Id")
@@ -66,15 +109,22 @@ namespace Ecommerce.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("IsActive")
+                    b.Property<DateTime>("FechaAlta")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<int>("IdRol")
                         .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<string>("Nombre")
                         .IsRequired()
@@ -84,36 +134,11 @@ namespace Ecommerce.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Tipo")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
-                    b.ToTable("usuarios", (string)null);
+                    b.HasIndex("IdRol");
 
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("83b00b1f-e914-4b30-8911-0ae9e3af68a3"),
-                            Apellido = "Pérez",
-                            CreatedOn = new DateTime(2025, 1, 13, 9, 55, 8, 508, DateTimeKind.Local).AddTicks(5296),
-                            Email = "juan.perez@example.com",
-                            IsActive = 1,
-                            Nombre = "Juan",
-                            Password = "asdasdasd",
-                            Tipo = "Cliente"
-                        },
-                        new
-                        {
-                            Id = new Guid("ba381ad0-e082-4a91-86b6-27d408aa2509"),
-                            Apellido = "Gómez",
-                            CreatedOn = new DateTime(2025, 1, 13, 9, 55, 8, 510, DateTimeKind.Local).AddTicks(4874),
-                            Email = "maria.gomez@example.com",
-                            IsActive = 1,
-                            Nombre = "María",
-                            Password = "kjsdfgk123123",
-                            Tipo = "Administrador"
-                        });
+                    b.ToTable("Usuarios");
                 });
 
             modelBuilder.Entity("Ecommerce.Models.Wishlist", b =>
@@ -134,6 +159,22 @@ namespace Ecommerce.Data.Migrations
                         .HasForeignKey("WishlistId");
 
                     b.Navigation("Wishlist");
+                });
+
+            modelBuilder.Entity("Ecommerce.Models.Usuario", b =>
+                {
+                    b.HasOne("Ecommerce.Models.Roles", "Rol")
+                        .WithMany("Usuarios")
+                        .HasForeignKey("IdRol")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Rol");
+                });
+
+            modelBuilder.Entity("Ecommerce.Models.Roles", b =>
+                {
+                    b.Navigation("Usuarios");
                 });
 #pragma warning restore 612, 618
         }
