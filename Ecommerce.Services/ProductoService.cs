@@ -22,7 +22,21 @@ namespace Ecommerce.Services
 
         public async Task<IEnumerable<Producto>> GetAll()
         {
-            return await _context.Productos.ToListAsync();
+            return await _context.Productos
+                .Include(p => p.TipoProducto)
+                .Select(p => new Producto
+                {
+                    Id = p.Id,
+                    IdTipoProducto = p.IdTipoProducto,
+                    TipoProducto = p.TipoProducto,
+                    Descripcion = p.Descripcion,
+                    Precio = p.Precio,
+                    Activo = p.Activo,
+                    FechaAlta = p.FechaAlta,
+                    Lotes = p.Lotes,
+                    Wishlists = p.Wishlists
+                })
+                .ToListAsync();
         }
 
         public async Task<Producto> GetById(Guid id) 
@@ -32,15 +46,15 @@ namespace Ecommerce.Services
 
         private readonly int _records = 5;
 
-        public async Task<PaginacionResultado<ProductoDto>> BuscarProductos(string? Titulo, int? Precio, int? page)
+        public async Task<PaginacionResultado<ProductoDto>> BuscarProductos(string? Tipo, int? Precio, int? page)
         {
             int _page = page ?? 1;
 
-            var query = _context.Productos.AsQueryable();
+            var query = _context.Productos.Include(p => p.TipoProducto).AsQueryable();
 
-            if(!string.IsNullOrEmpty(Titulo))
+            if(!string.IsNullOrEmpty(Tipo))
             {
-                query = query.Where(p => p.Titulo.Contains(Titulo));
+                query = query.Where(p => p.TipoProducto.Descripcion.Contains(Tipo));
             }
 
             if(Precio.HasValue)
@@ -57,10 +71,11 @@ namespace Ecommerce.Services
                             .Take(_records)
                             .Select(p => new ProductoDto
                             {
-                                Titulo = p.Titulo,
-                                Categoria = p.Categoria,
+                                TipoProducto = p.TipoProducto.Descripcion,
                                 Descripcion = p.Descripcion,
-                                Precio = p.Precio
+                                Precio = p.Precio,
+                                Activo = true,
+                                Lotes = p.Lotes
                             })
                             .ToListAsync();
 
@@ -96,8 +111,7 @@ namespace Ecommerce.Services
                 throw new ArgumentException("No se encontró el producto declarado");
             }
 
-            producto.Titulo = productoActualizado.Titulo;
-            producto.Categoria = productoActualizado.Categoria;
+            producto.TipoProducto = productoActualizado.TipoProducto;
             producto.Descripcion = productoActualizado.Descripcion;
             producto.Precio = productoActualizado.Precio;
             producto.Wishlists = productoActualizado.Wishlists;
@@ -106,15 +120,14 @@ namespace Ecommerce.Services
             return productoActualizado;
         }
 
-        public async Task Delete(Guid id)
+        public async Task<bool> Delete(Guid id)
         {
             var producto = await GetById(id);
 
-            if(producto != null)
-            {
-                _context.Productos.Remove(producto);
-                _context.SaveChangesAsync();
-            }
+            _context.Productos.Remove(producto);
+            await _context.SaveChangesAsync();
+             return true;
+
         }
     }
 }

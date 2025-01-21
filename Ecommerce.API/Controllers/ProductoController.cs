@@ -34,11 +34,11 @@ namespace Ecommerce.API.Controllers
         // SEARCH: api/BuscarProducto
         [HttpGet("buscar")]
         public async Task<ActionResult<PaginacionResultado<ProductoDto>>> BuscarProductos(
-            [FromQuery] string? Titulo,
+            [FromQuery] string? Tipo,
             [FromQuery] int? Precio,
-            [FromQuery] int? page)
+            [FromQuery] int? Page)
         {
-            var resultado = await _productoService.BuscarProductos(Titulo, Precio, page);
+            var resultado = await _productoService.BuscarProductos(Tipo, Precio, Page);
 
             return Ok(resultado);
         }
@@ -107,7 +107,7 @@ namespace Ecommerce.API.Controllers
 
             await _productoService.Delete(id);
 
-            return NoContent();
+            return Ok($"Se borró el producto con id {id} exitosamente");
         }
     }
 }
