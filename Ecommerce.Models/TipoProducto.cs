@@ -4,14 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Models.DTOs
+namespace Ecommerce.Models
 {
-    public class ProductoDto
+    public class TipoProducto
     {
-        public string TipoProducto { get; set; }
+        public int Id { get; set; } 
         public string Descripcion { get; set; }
-        public decimal Precio { get; set; }
         public bool Activo { get; set; }
-        public List<Lote> Lotes { get; set; } = new();
+        public DateTime FechaAlta { get; set; }
+        public List<Producto> Productos { get; set; } = new();
     }
 }
