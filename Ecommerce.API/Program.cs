@@ -7,11 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers()
-    .AddJsonOptions(options =>
-    {
-        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
-    });
+builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -22,6 +18,8 @@ builder.Services.AddDbContext<EcommerceContext>(options =>
     )
 );
 builder.Services.AddScoped<IProductoService, ProductoService>();
+builder.Services.AddScoped<ILoteService, LoteService>();
+builder.Services.AddScoped<IS3Service, S3Service>();
 
 
 var app = builder.Build();

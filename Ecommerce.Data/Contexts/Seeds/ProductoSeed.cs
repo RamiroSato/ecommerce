@@ -21,7 +21,6 @@ namespace Ecommerce.Data.Contexts.Seeds
                     IdTipoProducto = 2,
                     Descripcion = "Jeans Levi's Azul: son un básico imprescindible en cualquier guardarropa. Fabricados con denim de alta calidad, ofrecen una combinación perfecta de durabilidad y comodidad. Su diseño atemporal presenta un corte clásico de cinco bolsillos, cierre de cremallera con botón y el icónico parche de cuero con el logotipo Levi's en la parte trasera.",
                     Precio = 100000,
-                    Activo = false,
                 },
                 new Producto
                 {
@@ -29,7 +28,6 @@ namespace Ecommerce.Data.Contexts.Seeds
                     IdTipoProducto = 3,
                     Descripcion = "Zapatillas Hush Puppies Marrones: ofrecen una combinación perfecta de estilo y comodidad. Fabricadas con materiales de alta calidad, presentan un diseño casual y versátil ideal para el día a día. Su suela antideslizante y su plantilla acolchada garantizan soporte y confort durante todo el día. Perfectas para combinar con jeans o pantalones chinos, estas zapatillas son el complemento ideal para un look relajado pero elegante.",
                     Precio = 850000,
-                    Activo = false,
                 },
                 new Producto
                 {
