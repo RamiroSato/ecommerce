@@ -33,7 +33,7 @@ namespace Ecommerce.API.Controllers
 
         // SEARCH: api/BuscarProducto
         [HttpGet("buscar")]
-        public async Task<ActionResult<PaginacionResultado<ProductoDto>>> BuscarProductos(
+        public async Task<ActionResult<PaginacionResultado<ProductoUpdateDto>>> BuscarProductos(
             [FromQuery] string? Tipo,
             [FromQuery] int? Precio,
             [FromQuery] int? Page)
@@ -60,28 +60,16 @@ namespace Ecommerce.API.Controllers
         // PUT: api/Producto/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutProducto(Guid id, Producto productoActualizado)
+        public async Task<IActionResult> PutProducto(Guid id, ProductoUpdateDto productoActualizado)
         {
-            if (id != productoActualizado.Id)
-            {
-                return BadRequest("No es posible realizar la operación: el id proporcionado no coincide con ningún producto en la base de datos");
-            }
+            var actualizado = await _productoService.Update(id, productoActualizado);
 
-            var producto = await _productoService.GetById(id);
-
-            if (producto == null)
-            {
-                return NotFound("No se encontró el producto"); 
-            }
-
-            var actualizar = await _productoService.Update(id, productoActualizado);
-
-            if(actualizar == null)
+            if(actualizado == null)
             {
                 return NotFound("No se pudo actualizar el producto");
             }
 
-            return NoContent();
+            return Ok(actualizado);
         }
 
         // POST: api/Producto
