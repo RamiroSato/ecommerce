@@ -39,6 +39,7 @@ namespace Ecommerce.Data.Contexts
                 p.HasKey(p => p.Id);
                 p.Property(p => p.Id).ValueGeneratedOnAdd();
                 p.Property(p => p.IdTipoProducto).IsRequired();
+                p.Property(p => p.Imagen).IsRequired();
                 p.Property(p => p.Descripcion).IsRequired();
                 p.Property(p => p.Precio).HasColumnType("DECIMAL").IsRequired();
                 p.Property(p => p.Activo).IsRequired().HasDefaultValue(true);

@@ -13,7 +13,7 @@ namespace Ecommerce.Interfaces
         Task<IEnumerable<ProductoDto>> GetAll();
         Task<Producto> GetById(Guid id);
         Task<PaginacionResultado<ProductoPaginacionDto>> BuscarProductos(string? Titulo, int? Precio, int? page);
-        Task<Producto> Create(Producto producto);
+        Task<Producto> Create(ProductoInsertDto insertDto);
         Task<ProductoUpdateDto> Update(Guid id, ProductoUpdateDto productoActualizado);
         Task<bool> Delete(Guid id);
     }
