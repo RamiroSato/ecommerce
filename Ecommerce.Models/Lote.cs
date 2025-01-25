@@ -2,20 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Ecommerce.Models
 {
-    public class Producto
+    public class Lote
     {
         public Guid Id { get; set; }
-        public int IdTipoProducto { get; set; }
-        public TipoProducto TipoProducto { get; set; }
+        public Guid IdProducto { get; set; }
+        [JsonIgnore]
+        public Producto Producto { get; set; }
         public string Descripcion { get; set; }
-        public decimal Precio { get; set; }
+        public int Cantidad { get; set; }
         public bool Activo { get; set; }
         public DateTime FechaAlta { get; set; }
-        public List<Lote> Lotes { get; set; } = new();
-        public List<Wishlist>? Wishlists { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Ecommerce.Models;
+using Ecommerce.Models.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,11 +10,11 @@ namespace Ecommerce.Interfaces
 {
     public interface IProductoService
     {
-        Task<IEnumerable<Producto>> GetAll();
+        Task<IEnumerable<ProductoDto>> GetAll();
         Task<Producto> GetById(Guid id);
-        Task<PaginacionResultado<ProductoDto>> BuscarProductos(string? Titulo, int? Precio, int? page);
+        Task<PaginacionResultado<ProductoPaginacionDto>> BuscarProductos(string? Titulo, int? Precio, int? page);
         Task<Producto> Create(Producto producto);
-        Task<Producto> Update(Guid id, Producto productoActualizado);
-        Task Delete(Guid id);
+        Task<ProductoUpdateDto> Update(Guid id, ProductoUpdateDto productoActualizado);
+        Task<bool> Delete(Guid id);
     }
 }

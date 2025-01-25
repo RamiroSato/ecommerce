@@ -4,18 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Models
+namespace Ecommerce.Models.DTOs
 {
-    public class Producto
+    public class LoteProductoDto
     {
         public Guid Id { get; set; }
-        public int IdTipoProducto { get; set; }
-        public TipoProducto TipoProducto { get; set; }
         public string Descripcion { get; set; }
-        public decimal Precio { get; set; }
+        public int Cantidad { get; set; }
         public bool Activo { get; set; }
         public DateTime FechaAlta { get; set; }
-        public List<Lote> Lotes { get; set; } = new();
-        public List<Wishlist>? Wishlists { get; set; }
     }
 }
