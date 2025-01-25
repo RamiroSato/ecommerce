@@ -17,7 +17,7 @@ namespace Ecommerce.API.Controllers
     public class ProductoController : ControllerBase
     {
         private readonly IProductoService _productoService;
-
+        
         public ProductoController(IProductoService productoService)
         {
             _productoService = productoService;
@@ -75,9 +75,10 @@ namespace Ecommerce.API.Controllers
         // POST: api/Producto
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Producto>> PostProducto(Producto producto)
+        public async Task<ActionResult<Producto>> PostProducto(ProductoInsertDto insertDto)
         {
-            var productoCreado = await _productoService.Create(producto);
+            Producto producto;
+            var productoCreado = await _productoService.Create(insertDto);
 
             return CreatedAtAction("GetProducto", new { id = productoCreado.Id }, productoCreado);
         }

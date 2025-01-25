@@ -14,10 +14,12 @@ namespace Ecommerce.Services
     public class ProductoService : IProductoService
     {
         private readonly EcommerceContext _context;
+        private readonly IS3Service _s3Service;
 
-        public ProductoService(EcommerceContext context)
+        public ProductoService(EcommerceContext context, IS3Service s3Service)
         {
             _context = context;
+            _s3Service = s3Service;
         }
 
         public async Task<IEnumerable<ProductoDto>> GetAll()
@@ -28,6 +30,7 @@ namespace Ecommerce.Services
                     Id = p.Id,
                     IdTipoProducto = p.IdTipoProducto,
                     TipoProducto = p.TipoProducto.Descripcion,
+                    Imagen = p.Imagen,
                     Descripcion = p.Descripcion,
                     Precio = p.Precio,
                     Activo = p.Activo,
@@ -78,6 +81,7 @@ namespace Ecommerce.Services
                             .Select(p => new ProductoPaginacionDto
                             {
                                 TipoProducto = p.TipoProducto.Descripcion,
+                                Imagen = p.Imagen,
                                 Descripcion = p.Descripcion,
                                 Precio = p.Precio,
                                 Activo = true,
@@ -99,8 +103,19 @@ namespace Ecommerce.Services
             };
         }
 
-        public async Task<Producto> Create(Producto producto)
+        public async Task<Producto> Create(ProductoInsertDto insertDto)
         {
+            string urlImagen = await _s3Service.UploadFileAsync(insertDto.Imagen);
+
+            Producto producto = new Producto()
+            {
+                IdTipoProducto = insertDto.IdTipoProducto,
+                Imagen = urlImagen,
+                Descripcion = insertDto.Descripcion,
+                Precio = insertDto.Precio,
+                Activo = insertDto.Activo
+            };
+
             if (producto.Id == Guid.Empty)
             {
                 producto.Id = Guid.NewGuid();

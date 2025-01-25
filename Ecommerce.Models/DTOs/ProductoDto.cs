@@ -11,6 +11,7 @@ namespace Ecommerce.Models.DTOs
         public Guid Id { get; set; }
         public int IdTipoProducto { get; set; }
         public string TipoProducto { get; set; }
+        public string Imagen { get; set; }
         public string Descripcion { get; set; }
         public decimal Precio { get; set; }
         public bool Activo { get; set; }

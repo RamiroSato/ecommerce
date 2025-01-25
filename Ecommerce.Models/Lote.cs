@@ -11,7 +11,6 @@ namespace Ecommerce.Models
     {
         public Guid Id { get; set; }
         public Guid IdProducto { get; set; }
-        [JsonIgnore]
         public Producto Producto { get; set; }
         public string Descripcion { get; set; }
         public int Cantidad { get; set; }

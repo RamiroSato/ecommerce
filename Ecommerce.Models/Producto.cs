@@ -11,11 +11,12 @@ namespace Ecommerce.Models
         public Guid Id { get; set; }
         public int IdTipoProducto { get; set; }
         public TipoProducto TipoProducto { get; set; }
+        public string Imagen { get; set; }
         public string Descripcion { get; set; }
         public decimal Precio { get; set; }
         public bool Activo { get; set; }
         public DateTime FechaAlta { get; set; }
-        public List<Lote> Lotes { get; set; } = new();
+        public List<Lote> Lotes { get; set; }
         public List<Wishlist>? Wishlists { get; set; }
     }
 }
