@@ -83,13 +83,12 @@ namespace Ecommerce.Data.Contexts
 
                 u.HasKey(u => u.Id);
                 u.Property(u => u.Id).ValueGeneratedOnAdd();
-
                 u.Property(u => u.IdRol).IsRequired();
-
                 u.Property(u => u.Nombre).IsRequired();
                 u.Property(u => u.Apellido).IsRequired();
                 u.Property(u => u.Password).IsRequired();
                 u.Property(u => u.Email).IsRequired();
+                u.HasIndex(u=> u.Email).IsUnique();
                 u.Property(u => u.Activo).HasDefaultValue(true);
                 u.Property(u => u.FechaAlta).IsRequired().HasDefaultValueSql("GETDATE()");
 

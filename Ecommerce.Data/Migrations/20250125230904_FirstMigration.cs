@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Ecommerce.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class FirstMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -48,8 +48,8 @@ namespace Ecommerce.Data.Migrations
                     Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Apellido = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
+                    Email = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Activo = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
                     FechaAlta = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()")
                 },
                 constraints: table =>
@@ -97,6 +97,12 @@ namespace Ecommerce.Data.Migrations
                 name: "IX_Productos_WishlistId",
                 table: "Productos",
                 column: "WishlistId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Usuarios_Email",
+                table: "Usuarios",
+                column: "Email",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Usuarios_IdRol",
