@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+
+using System.Net.Http.Headers;
 
 namespace Ecommerce.Models.Dtos.DtoMappers
 {
@@ -11,7 +9,32 @@ namespace Ecommerce.Models.Dtos.DtoMappers
         public static Usuario UsuarioDtoAUsuario(this UsuarioDto dto) 
         {
 
-            return new Usuario(dto.Nombre, dto.Apellido, dto.Password, dto.Email, dto.Tipo);
+            return new Usuario
+            {
+
+                Nombre = dto.Nombre,
+                Apellido = dto.Apellido,
+                Password = dto.Password,
+                Email = dto.Email,
+                IdRol = dto.IdRol,
+                
+            };
+        
+        }
+
+        public static GetUsuarioDto usuarioADto(this Usuario usuario) 
+        {
+
+            return new GetUsuarioDto
+            {
+
+                Nombre = usuario.Nombre,
+                Apellido = usuario.Apellido,
+                Email = usuario.Email,
+                IsActive = usuario.Activo
+
+
+            };
         
         }
 

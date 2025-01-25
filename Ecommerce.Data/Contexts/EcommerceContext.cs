@@ -1,12 +1,56 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Ecommerce.Models;
 using Ecommerce.Data.Contexts.Seeds;
-using Microsoft.EntityFrameworkCore.Diagnostics;
+
 
 namespace Ecommerce.Data.Contexts
 {
     public class EcommerceContext : DbContext
     {
+        #region Atributos
+
+        DbSet<Usuario>? usuarios;
+        DbSet<Roles>? roles;
+        DbSet<Producto>? productos;
+
+
+        #endregion
+
+        #region Propiedades
+        public DbSet<Producto> Productos
+        {
+            get
+            {
+                if (productos == null)
+                    throw new Exception("No existe productos");
+                return productos;
+            }
+            set => productos = value;
+        }
+
+        public DbSet<Usuario> Usuarios
+        {
+            get
+            {
+                if (usuarios == null)
+                    throw new Exception("No existe usuarios");
+                return usuarios;
+            }
+            set => usuarios = value;
+        }
+
+        public DbSet<Roles> Roles
+        {
+            get
+            {
+                if (roles == null)
+                    throw new Exception("No existe roles");
+
+                return roles;
+            }
+            set => roles = value;
+        }
+
         #region Propiedades
         public DbSet<TipoProducto>? TipoProductos { get; set; }
         public DbSet<Producto>? Productos { get; set; }
@@ -21,6 +65,41 @@ namespace Ecommerce.Data.Contexts
         #region Metodos
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            modelBuilder.Entity<Roles>(r =>
+            {
+
+                r.HasKey(r => r.Id);
+                r.Property(r => r.Id).ValueGeneratedOnAdd();
+
+                r.Property(r => r.Descripcion).IsRequired();
+                r.Property(r => r.Activo).HasDefaultValue(true);
+                r.Property(r => r.FechaAlta).IsRequired().HasDefaultValueSql("GETDATE()");
+
+                r.HasMany(r => r.Usuarios)
+                 .WithOne(u => u.Rol)
+                 .HasForeignKey(u => u.IdRol)
+                 .OnDelete(DeleteBehavior.Cascade);
+
+            });
+
+            modelBuilder.Entity<Usuario>(u =>
+            {
+
+                u.HasKey(u => u.Id);
+                u.Property(u => u.Id).ValueGeneratedOnAdd();
+                u.Property(u => u.IdRol).IsRequired();
+                u.Property(u => u.Nombre).IsRequired();
+                u.Property(u => u.Apellido).IsRequired();
+                u.Property(u => u.Password).IsRequired();
+                u.Property(u => u.Email).IsRequired();
+                u.HasIndex(u=> u.Email).IsUnique();
+                u.Property(u => u.Activo).HasDefaultValue(true);
+                u.Property(u => u.FechaAlta).IsRequired().HasDefaultValueSql("GETDATE()");
+
+
+            });
+
             #region TiposProducto
             modelBuilder.Entity<TipoProducto>(tp =>
             {
@@ -53,22 +132,9 @@ namespace Ecommerce.Data.Contexts
                 .WithMany(w => w.Productos);
             });
 
-            modelBuilder.Entity<Usuario>(u =>
-            {
-                u.ToTable("usuarios");
-                u.HasKey(u => u.Id);
-                u.Property(u => u.Id).ValueGeneratedOnAdd();
-                u.Property(u => u.Nombre).IsRequired();
-                u.Property(u => u.Apellido).IsRequired();
-                u.Property(u => u.Password).IsRequired();
-                u.Property(u => u.Email).IsRequired();
-                u.Property(u => u.IsActive).IsRequired();
-                u.Property(u => u.CreatedOn);
 
-
-            });
-
-            modelBuilder.ApplyConfiguration(new UsuarioSeed());
+            modelBuilder.ApplyConfiguration(new RolesSeeds());
+            //modelBuilder.ApplyConfiguration(new UsuarioSeed());
             //modelBuilder.ApplyConfiguration(new ProductoSeed());
             modelBuilder.ApplyConfiguration(new ProductoSeed());
             #endregion
@@ -91,6 +157,6 @@ namespace Ecommerce.Data.Contexts
         }
         #endregion
 
-       
+
     }
 }
