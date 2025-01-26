@@ -1,4 +1,4 @@
-﻿using Ecommerce.Models.Dtos;
+﻿using Ecommerce.DTO;
 
 namespace Ecommerce.Services
 {

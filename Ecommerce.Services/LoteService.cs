@@ -1,7 +1,7 @@
 ﻿using Ecommerce.Data.Contexts;
 using Ecommerce.Interfaces;
 using Ecommerce.Models;
-using Ecommerce.Models.DTOs;
+using Ecommerce.DTO;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

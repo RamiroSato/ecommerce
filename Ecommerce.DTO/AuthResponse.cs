@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Models.Dtos
+namespace Ecommerce.DTO
 {
     public class AuthResponse
     {

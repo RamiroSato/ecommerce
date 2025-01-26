@@ -1,6 +1,6 @@
 ﻿
 
-namespace Ecommerce.Models.Dtos
+namespace Ecommerce.DTO
 {
     public class UsuarioDto
     {    

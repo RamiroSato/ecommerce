@@ -5,70 +5,26 @@ using Ecommerce.Data.Contexts.Seeds;
 
 namespace Ecommerce.Data.Contexts
 {
-    public class EcommerceContext : DbContext
+    public class EcommerceContext(DbContextOptions<EcommerceContext> options) : DbContext(options)
     {
-        #region Atributos
-
-        DbSet<Usuario>? usuarios;
-        DbSet<Roles>? roles;
-        DbSet<Producto>? productos;
-
-
-        #endregion
-
         #region Propiedades
-        public DbSet<Producto> Productos
-        {
-            get
-            {
-                if (productos == null)
-                    throw new Exception("No existe productos");
-                return productos;
-            }
-            set => productos = value;
-        }
 
-        public DbSet<Usuario> Usuarios
-        {
-            get
-            {
-                if (usuarios == null)
-                    throw new Exception("No existe usuarios");
-                return usuarios;
-            }
-            set => usuarios = value;
-        }
-
-        public DbSet<Roles> Roles
-        {
-            get
-            {
-                if (roles == null)
-                    throw new Exception("No existe roles");
-
-                return roles;
-            }
-            set => roles = value;
-        }
-
-        #region Propiedades
+        public DbSet<Usuario> Usuarios { get; set; }
+        public DbSet<Rol> Roles { get; set; }
         public DbSet<TipoProducto>? TipoProductos { get; set; }
         public DbSet<Producto>? Productos { get; set; }
         public DbSet<Lote>? Lotes { get; set; }
         public DbSet<Wishlist>? Wishlists { get; set; }
-        #endregion
 
-        #region Constructor
-        public EcommerceContext(DbContextOptions<EcommerceContext> options) : base(options) { }
         #endregion
 
         #region Metodos
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
-            modelBuilder.Entity<Roles>(r =>
+            modelBuilder.Entity<Rol>(r =>
             {
-
+                r.ToTable("Roles");
                 r.HasKey(r => r.Id);
                 r.Property(r => r.Id).ValueGeneratedOnAdd();
 
@@ -93,7 +49,7 @@ namespace Ecommerce.Data.Contexts
                 u.Property(u => u.Apellido).IsRequired();
                 u.Property(u => u.Password).IsRequired();
                 u.Property(u => u.Email).IsRequired();
-                u.HasIndex(u=> u.Email).IsUnique();
+                u.HasIndex(u => u.Email).IsUnique();
                 u.Property(u => u.Activo).HasDefaultValue(true);
                 u.Property(u => u.FechaAlta).IsRequired().HasDefaultValueSql("GETDATE()");
 
@@ -132,11 +88,6 @@ namespace Ecommerce.Data.Contexts
                 .WithMany(w => w.Productos);
             });
 
-
-            modelBuilder.ApplyConfiguration(new RolesSeeds());
-            //modelBuilder.ApplyConfiguration(new UsuarioSeed());
-            //modelBuilder.ApplyConfiguration(new ProductoSeed());
-            modelBuilder.ApplyConfiguration(new ProductoSeed());
             #endregion
 
             #region Lotes
@@ -153,10 +104,15 @@ namespace Ecommerce.Data.Contexts
                 .WithMany(p => p.Lotes)
                 .HasForeignKey(l => l.IdProducto);
             });
+
+            modelBuilder.ApplyConfiguration(new RolesSeeds());
+            modelBuilder.ApplyConfiguration(new UsuarioSeed());
+            modelBuilder.ApplyConfiguration(new ProductoSeed());
+            modelBuilder.ApplyConfiguration(new ProductoSeed());
+
             #endregion
         }
         #endregion
-
 
     }
 }

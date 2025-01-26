@@ -1,7 +1,7 @@
 ﻿using Amazon;
 using Amazon.CognitoIdentityProvider;
 using Amazon.CognitoIdentityProvider.Model;
-using Ecommerce.Models.Dtos;
+using Ecommerce.DTO;
 using Microsoft.Extensions.Configuration;
 
 

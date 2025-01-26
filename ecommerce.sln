@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ecommerce.Interfaces", "Eco
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ecommerce.Services", "Ecommerce.Services\Ecommerce.Services.csproj", "{14C659F0-27D8-4EA6-9CA3-024A8BF698D7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ecommerce.DTO", "Ecommerce.DTO\Ecommerce.DTO.csproj", "{1E50637F-441E-49B7-A4CA-CBF87C92DAC2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{14C659F0-27D8-4EA6-9CA3-024A8BF698D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{14C659F0-27D8-4EA6-9CA3-024A8BF698D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{14C659F0-27D8-4EA6-9CA3-024A8BF698D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1E50637F-441E-49B7-A4CA-CBF87C92DAC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E50637F-441E-49B7-A4CA-CBF87C92DAC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E50637F-441E-49B7-A4CA-CBF87C92DAC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E50637F-441E-49B7-A4CA-CBF87C92DAC2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,23 +1,16 @@
 ﻿using Ecommerce.Data.Contexts;
 using Ecommerce.Interfaces;
 using Ecommerce.Models;
-using Ecommerce.Models.Dtos;
+using Ecommerce.DTO;
 using Microsoft.EntityFrameworkCore;
 
 
 namespace Ecommerce.Services
 {
 
-    public class UsuarioService : IUsuarioService
+    public class UsuarioService(EcommerceContext context) : IUsuarioService
     {
-
-        private readonly EcommerceContext _context;
-
-
-        public UsuarioService(EcommerceContext context)
-        {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
-        }
+        private readonly EcommerceContext _context = context ?? throw new ArgumentNullException(nameof(context));
 
         public async Task<Usuario> AddUsuario(UsuarioDto usuarioDto)
         {
@@ -38,11 +31,7 @@ namespace Ecommerce.Services
 
                 // Busca el rol existente en la base de datos
 
-                Roles? rolExistente = await _context.Roles.FindAsync(usuarioDto.IdRol);
-
-                if (rolExistente == null)
-                    throw new Exception($"El rol con Id {usuarioDto.IdRol} no existe.");
-
+                Rol? rolExistente = await _context.Roles.FindAsync(usuarioDto.IdRol) ?? throw new Exception($"El rol con Id {usuarioDto.IdRol} no existe.");
 
                 await _context.Usuarios.AddAsync(usuarioToAdd);
                 await _context.SaveChangesAsync();

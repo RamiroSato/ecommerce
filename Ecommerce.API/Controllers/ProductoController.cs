@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Ecommerce.Data.Contexts;
 using Ecommerce.Models;
 using Ecommerce.Interfaces;
-using Ecommerce.Models.DTOs;
+using Ecommerce.DTO;
 
 namespace Ecommerce.API.Controllers
 {

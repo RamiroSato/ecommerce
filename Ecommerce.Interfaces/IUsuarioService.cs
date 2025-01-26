@@ -1,5 +1,5 @@
 ﻿using Ecommerce.Models;
-using Ecommerce.Models.Dtos;
+using Ecommerce.DTO;
 
 
 namespace Ecommerce.Interfaces

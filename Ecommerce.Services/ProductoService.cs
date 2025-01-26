@@ -1,7 +1,7 @@
 ﻿using Ecommerce.Data.Contexts;
 using Ecommerce.Interfaces;
 using Ecommerce.Models;
-using Ecommerce.Models.DTOs;
+using Ecommerce.DTO;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -43,12 +43,12 @@ namespace Ecommerce.Services
                         Activo = l.Activo,
                         FechaAlta = l.FechaAlta
                     }).ToList(),
-                    Wishlists = p.Wishlists
+                    //Wishlists = p.Wishlists
                 })
                 .ToListAsync();
         }
 
-        public async Task<Producto> GetById(Guid id) 
+        public async Task<Producto> GetById(Guid id)
         {
             return await _context.Productos.FirstOrDefaultAsync(p => p.Id == id);
         }
@@ -61,12 +61,12 @@ namespace Ecommerce.Services
 
             var query = _context.Productos.Include(p => p.TipoProducto).AsQueryable();
 
-            if(!string.IsNullOrEmpty(Tipo))
+            if (!string.IsNullOrEmpty(Tipo))
             {
                 query = query.Where(p => p.TipoProducto.Descripcion.Contains(Tipo));
             }
 
-            if(Precio.HasValue)
+            if (Precio.HasValue)
             {
                 query = query.Where(p => p.Precio == Precio);
             }
@@ -159,7 +159,7 @@ namespace Ecommerce.Services
 
             _context.Productos.Remove(producto);
             await _context.SaveChangesAsync();
-             return true;
+            return true;
 
         }
     }

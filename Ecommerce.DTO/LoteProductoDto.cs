@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Models.DTOs
+namespace Ecommerce.DTO
 {
     public class LoteProductoDto
     {
