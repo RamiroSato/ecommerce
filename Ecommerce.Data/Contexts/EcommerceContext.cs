@@ -5,8 +5,10 @@ using Ecommerce.Data.Contexts.Seeds;
 
 namespace Ecommerce.Data.Contexts
 {
-    public class EcommerceContext(DbContextOptions<EcommerceContext> options) : DbContext(options)
+    public class  EcommerceContext : DbContext
     {
+        public EcommerceContext(DbContextOptions<EcommerceContext> options) : base(options) { }
+    
         #region Propiedades
 
         public DbSet<Usuario>? Usuarios { get; set; }
