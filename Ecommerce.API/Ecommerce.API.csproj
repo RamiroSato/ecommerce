@@ -25,6 +25,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Ecommerce.Data\Ecommerce.Data.csproj" />
     <ProjectReference Include="..\Ecommerce.DTO\Ecommerce.DTO.csproj" />
+    <ProjectReference Include="..\Ecommerce.Exceptions\Ecommerce.Exceptions.csproj" />
     <ProjectReference Include="..\Ecommerce.Interfaces\Ecommerce.Interfaces.csproj" />
     <ProjectReference Include="..\Ecommerce.Models\Ecommerce.Models.csproj" />
     <ProjectReference Include="..\Ecommerce.Services\Ecommerce.Services.csproj" />

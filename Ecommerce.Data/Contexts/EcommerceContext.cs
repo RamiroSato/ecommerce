@@ -9,8 +9,8 @@ namespace Ecommerce.Data.Contexts
     {
         #region Propiedades
 
-        public DbSet<Usuario> Usuarios { get; set; }
-        public DbSet<Rol> Roles { get; set; }
+        public DbSet<Usuario>? Usuarios { get; set; }
+        public DbSet<Rol>? Roles { get; set; }
         public DbSet<TipoProducto>? TipoProductos { get; set; }
         public DbSet<Producto>? Productos { get; set; }
         public DbSet<Lote>? Lotes { get; set; }
@@ -21,7 +21,7 @@ namespace Ecommerce.Data.Contexts
         #region Metodos
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-
+            #region Rol
             modelBuilder.Entity<Rol>(r =>
             {
                 r.ToTable("Roles");
@@ -38,7 +38,9 @@ namespace Ecommerce.Data.Contexts
                  .OnDelete(DeleteBehavior.Cascade);
 
             });
+            #endregion
 
+            #region Usuario
             modelBuilder.Entity<Usuario>(u =>
             {
 
@@ -53,8 +55,12 @@ namespace Ecommerce.Data.Contexts
                 u.Property(u => u.Activo).HasDefaultValue(true);
                 u.Property(u => u.FechaAlta).IsRequired().HasDefaultValueSql("GETDATE()");
 
+                u.HasOne(u => u.Wishlist)
+                .WithOne(w => w.Usuario)
+                .HasForeignKey<Wishlist>(w => w.IdUsuario);
 
             });
+            #endregion
 
             #region TiposProducto
             modelBuilder.Entity<TipoProducto>(tp =>
@@ -65,7 +71,6 @@ namespace Ecommerce.Data.Contexts
                 tp.Property(tp => tp.FechaAlta).IsRequired().HasDefaultValueSql("GETDATE()");
             });
 
-            modelBuilder.ApplyConfiguration(new TipoProductoSeed());
             #endregion
 
             #region Productos
@@ -85,9 +90,22 @@ namespace Ecommerce.Data.Contexts
                 .HasForeignKey(p => p.IdTipoProducto);
 
                 p.HasMany(p => p.Wishlists)
-                .WithMany(w => w.Productos);
+                .WithMany(w => w.Productos)
+                .UsingEntity(wp => wp.ToTable("WishlistsProductos"));
             });
 
+            #endregion
+
+            #region Wishlist
+            modelBuilder.Entity<Wishlist>(w =>
+            {
+                w.HasKey(w => w.Id);
+                w.Property(w => w.Id).ValueGeneratedOnAdd();
+                w.Property(w => w.IdUsuario).IsRequired();
+
+                w.HasMany(w => w.Productos)
+                .WithMany(p => p.Wishlists);
+            });
             #endregion
 
             #region Lotes
@@ -104,14 +122,16 @@ namespace Ecommerce.Data.Contexts
                 .WithMany(p => p.Lotes)
                 .HasForeignKey(l => l.IdProducto);
             });
+            #endregion
 
+            #region Seeds
             modelBuilder.ApplyConfiguration(new RolesSeeds());
+            modelBuilder.ApplyConfiguration(new TipoProductoSeed());
             modelBuilder.ApplyConfiguration(new UsuarioSeed());
             modelBuilder.ApplyConfiguration(new ProductoSeed());
-            modelBuilder.ApplyConfiguration(new ProductoSeed());
-
             #endregion
         }
+
         #endregion
 
     }

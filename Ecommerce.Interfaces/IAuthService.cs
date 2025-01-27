@@ -1,6 +1,6 @@
 ﻿using Ecommerce.DTO;
 
-namespace Ecommerce.Services
+namespace Ecommerce.Interfaces
 {
     public interface IAuthService
     {

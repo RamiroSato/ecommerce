@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Amazon.CognitoIdentityProvider;
 using Ecommerce.Models;
+using Ecommerce.API;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,6 +49,8 @@ builder.Services.AddScoped<IS3Service, S3Service>();
 
 
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

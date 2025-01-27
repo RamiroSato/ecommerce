@@ -17,5 +17,6 @@ namespace Ecommerce.Models
         public string Email { get; set; }
         public bool Activo { get; set; }
         public DateTime FechaAlta { get; set; }
+        public Wishlist Wishlist { get; set; }
     }
 }

@@ -12,12 +12,11 @@ namespace Ecommerce.Data.Contexts.Seeds
                 new Usuario
                 {
                     Id = Guid.Parse("f4b3e2b5-7b1e-4e1e-8b41-5b9e3e4f1e6a"),
-                    Nombre = "María",
-                    Apellido = "Gómez",
+                    Nombre = "Admin",
+                    Apellido = "Admin",
                     Password = "kjsdfgk123123",
-                    Email = "maria.gomez@example.com",
+                    Email = "-",
                     IdRol = 1
-
                 },
                 new Usuario
                 {
