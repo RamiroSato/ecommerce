@@ -30,9 +30,7 @@ namespace Ecommerce.Services
 
             // Busca el rol existente en la base de datos
 
-            Rol? rolExistente = await _context.Roles.FindAsync(usuarioDto.IdRol) ?? throw new ResourceNotFoundException($"El rol con Id {usuarioDto.IdRol} no existe.");
-
-
+            Rol? rolExistente = await _context.Roles.FindAsync(usuarioDto.IdRol) ?? throw new ResourceNotFoundException($"Rol with Id {usuarioDto.IdRol} not found.");
 
             await _context.Usuarios.AddAsync(usuarioToAdd);
 
@@ -46,7 +44,7 @@ namespace Ecommerce.Services
             var usuario = await _context.Usuarios.FindAsync(id);
 
             if (usuario == null)
-                throw new ResourceNotFoundException($"Usuario con Id {id} no encontrado.");
+                throw new ResourceNotFoundException($"User with Id {id} not found.");
 
             return new GetUsuarioDto()
             {
@@ -59,33 +57,24 @@ namespace Ecommerce.Services
 
         public async Task<List<GetUsuarioDto>> GetUsuarios()
         {
-            try
-            {
-                var listaUsuarios = await _context.Usuarios.ToListAsync();
-                //Creada la lista la modifica de usuario a usuarioDto 
-                var listaUsuariosDto = listaUsuarios.Select(u =>
-                    new GetUsuarioDto()
-                    {
-                        Nombre = u.Nombre,
-                        Apellido = u.Apellido,
-                        Email = u.Email,
-                        IsActive = u.Activo
-                    }
-                ).ToList();
-                //intenta retornar la lista de usuarios
-                return listaUsuariosDto;
+            var listaUsuarios = await _context.Usuarios.ToListAsync();
 
-            }
-            catch (DbUpdateException ex)
-            {
-                // Captura detalles específicos de la base de datos
-                throw new Exception("Error al guardar el usuario en la base de datos", ex);
-            }
-            catch (Exception ex)
-            {
-                // Captura otros errores
-                throw new Exception("Ocurrió un error inesperado", ex);
-            }
+            if(listaUsuarios == null) throw new ResourceNotFoundException("No users in the Data Base");
+
+            //Creada la lista la modifica de usuario a usuarioDto 
+            var listaUsuariosDto = listaUsuarios.Select(u =>
+                new GetUsuarioDto()
+                {
+                    Nombre = u.Nombre,
+                    Apellido = u.Apellido,
+                    Email = u.Email,
+                    IsActive = u.Activo
+                }
+            ).ToList();
+            //intenta retornar la lista de usuarios
+            return listaUsuariosDto;
+
+
 
         }
 

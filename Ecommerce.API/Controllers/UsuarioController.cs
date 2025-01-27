@@ -25,7 +25,7 @@ namespace Ecommerce.API.Controllers
         public async Task<IActionResult> Create([FromBody] UsuarioDto usuario)
         {
             await _usuarioService.AddUsuario(usuario);
-            return Ok("Usuario creado con exito");
+            return Ok("User successfully created");
         }
 
 
@@ -55,7 +55,7 @@ namespace Ecommerce.API.Controllers
         {
             //Si el usuario se encuentra en la base de datos lo borra y retorna el usuario que se acaba de eliminar en formato dto
             await _usuarioService.DeleteUsuario(id);
-            return Ok();
+            return Ok("User successfully deleted");
         }
 
         //Metodo para modificar usuarios
@@ -72,14 +72,8 @@ namespace Ecommerce.API.Controllers
             });
 
             //Retorno del ok y el usuario modificado
-            return Ok("Usuario modificado con exito");
+            return Ok("User successfully modified");
 
         }
-
-
-
-
-
-
     }
 }
