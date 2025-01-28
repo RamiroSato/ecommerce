@@ -20,6 +20,7 @@ public class Transaccion
 {
     public Guid Id { get; set; }
     public Guid IdPreOrden { get; set; }
+    public PreOrden PreOrden { get; set; }
     public int FechaPago { get; set; }
     public decimal Monto { get; set; }
     public string NombreTarjeta { get; set; }

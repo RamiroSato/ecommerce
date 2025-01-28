@@ -124,6 +124,85 @@ namespace Ecommerce.Data.Contexts
             });
             #endregion
 
+            #region PreOrden
+            modelBuilder.Entity<PreOrden>(PO =>
+            {
+                PO.HasKey(PO => PO.Id);
+                PO.Property(PO => PO.Id).ValueGeneratedOnAdd();
+                PO.Property(PO => PO.IdUsuario).IsRequired();
+                PO.Property(PO => PO.Descripcion).IsRequired();
+                PO.Property(PO => PO.Vencimiento).IsRequired();
+                PO.Property(PO => PO.Activo).IsRequired().HasDefaultValue(true);
+                PO.Property(PO => PO.FechaAlta).IsRequired();
+
+                PO.HasOne(PO => PO.Usuario)
+                .WithMany()
+                .HasForeignKey(PO => PO.IdUsuario);
+
+                PO.HasOne(PO => PO.Orden)
+                .WithOne(O => O.PreOrden)
+                .HasForeignKey<Orden>(O => O.IdPreOrden);
+
+                PO.HasOne(PO => PO.Transaccion)
+                .WithOne(T => T.PreOrden)
+                .HasForeignKey<Orden>(T => T.IdPreOrden);
+            });
+            #endregion
+
+            #region ItemPreOrden
+            modelBuilder.Entity<ItemPreOrden>(IPO =>
+            {
+                IPO.HasKey(IPO => IPO.Id);
+                IPO.Property(IPO => IPO.Id).ValueGeneratedOnAdd();
+                IPO.Property(IPO => IPO.IdLote).IsRequired();
+                IPO.Property(IPO => IPO.IdPreOrden).IsRequired();
+                IPO.Property(IPO => IPO.PrecioUnitario).HasConversion<decimal>().IsRequired();
+                IPO.Property(IPO => IPO.Cantidad).IsRequired();
+                IPO.Property(IPO => IPO.Activo).IsRequired().HasDefaultValue(true);
+                IPO.Property(IPO => IPO.FechaAlta).IsRequired().HasDefaultValueSql("GETDATE()");
+
+                IPO.HasOne(IPO => IPO.PreOrden)
+                .WithMany(PO => PO.Items)
+                .HasForeignKey(IPO => IPO.IdPreOrden);
+
+                IPO.HasOne(IPO => IPO.Lote)
+                .WithMany()
+                .HasForeignKey(IPO => IPO.IdLote);
+            });
+            #endregion
+
+            #region Orden
+            modelBuilder.Entity<Orden>(O =>
+            {
+                O.HasKey(O => O.Id);
+                O.Property(O => O.Id).ValueGeneratedOnAdd();
+                O.Property(O => O.IdPreOrden).IsRequired();
+                O.Property(O => O.NumeroOrden).IsRequired();
+                O.Property(O => O.FechaEntrega);
+                O.Property(O => O.Activo).IsRequired().HasDefaultValue(true);
+                O.Property(O => O.FechaAlta).IsRequired();
+
+
+            });
+            #endregion
+
+            #region Transaccion
+
+            modelBuilder.Entity<Transaccion>(T =>
+            {
+                T.HasKey(T => T.Id);
+                T.Property(T => T.Id).ValueGeneratedOnAdd();
+                T.Property(T => T.IdPreOrden).IsRequired();
+                T.Property(T => T.FechaPago).IsRequired();
+                T.Property(T => T.Monto).HasConversion<decimal>().IsRequired();
+                T.Property(T => T.NombreTarjeta).IsRequired();
+                T.Property(T => T.NumeroTarjeta).IsRequired();
+                T.Property(T => T.Activo).IsRequired().HasDefaultValue(true);
+                T.Property(T => T.FechaAlta).IsRequired();
+            });
+
+            #endregion
+
             #region Seeds
             modelBuilder.ApplyConfiguration(new RolesSeeds());
             modelBuilder.ApplyConfiguration(new TipoProductoSeed());
