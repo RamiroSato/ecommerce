@@ -145,7 +145,8 @@ namespace Ecommerce.Data.Contexts
 
                 PO.HasOne(PO => PO.Transaccion)
                 .WithOne(T => T.PreOrden)
-                .HasForeignKey<Orden>(T => T.IdPreOrden);
+                .HasForeignKey<Transaccion>(T => T.IdPreOrden);
+
             });
             #endregion
 
@@ -212,6 +213,5 @@ namespace Ecommerce.Data.Contexts
         }
 
         #endregion
-
     }
 }

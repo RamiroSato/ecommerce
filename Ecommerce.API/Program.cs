@@ -4,12 +4,13 @@ using Microsoft.EntityFrameworkCore;
 using Ecommerce.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using Amazon.CognitoIdentityProvider;
-using Ecommerce.Models;
 using Ecommerce.API;
+using DotNetEnv;
+
+Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
+
 
 // Add services to the container.
 
@@ -35,6 +36,9 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
+
+var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__Connection");
+builder.Configuration["ConnectionStrings:Connection"] = connectionString;
 
 
 builder.Services.AddDbContext<EcommerceContext>(options =>
