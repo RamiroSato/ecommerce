@@ -1,8 +1,11 @@
 ﻿using Amazon;
 using Amazon.CognitoIdentityProvider;
 using Amazon.CognitoIdentityProvider.Model;
+using Amazon.Runtime;
+using Ecommerce.Data.Contexts;
 using Ecommerce.DTO;
 using Ecommerce.Interfaces;
+using Ecommerce.Models;
 using Microsoft.Extensions.Configuration;
 
 
@@ -14,42 +17,61 @@ namespace Ecommerce.Services
         private readonly IAmazonCognitoIdentityProvider _cognitoClient;
         private readonly string _clientId;
         private readonly string _userPoolId;
-        
-        public AuthService(IConfiguration config)
+        private readonly IUsuarioService _usuarioService;
+
+        public AuthService(IConfiguration config, IUsuarioService usuarioService)
         {
-            _cognitoClient = new AmazonCognitoIdentityProviderClient(RegionEndpoint.GetBySystemName(config.GetSection("AWS:Region").Value));
+            _cognitoClient = new AmazonCognitoIdentityProviderClient
+                (
+                new BasicAWSCredentials(
+                config["AWS:Access_key_id"],
+                config["AWS:Secret_access_key"]),
+                RegionEndpoint.GetBySystemName(config["AWS:Region"])
+                );
+
             _clientId = config.GetSection("AWS:AppClientId").Value;
-            _userPoolId = config.GetSection("AWS:UserPoolId").Value;            
+            _userPoolId = config.GetSection("AWS:UserPoolId").Value;
+            _usuarioService = usuarioService;
         }
 
-        public async Task<AuthResponse> RegisterAsync(string email, string password)
+
+        //Funciona, tengo que reveer como devolver el token de autenticacion
+        public async Task<AuthResponse> RegisterAsync(UsuarioDto usuario)
         {
             try
             {
-                var request = new SignUpRequest
+                var request = new AdminCreateUserRequest
                 {
-                    ClientId = _clientId,
-                    Username = email,
-                    Password = password,
+                    UserPoolId = _userPoolId,
+                    Username = usuario.Email,
+                    TemporaryPassword = usuario.Password,
                     UserAttributes = new List<AttributeType>
                     {
-                        new AttributeType
-                        {
-                            Name = "email",
-                            Value = email
-                        }
+                        new AttributeType { Name = "email",  Value = usuario.Email },
+                        new AttributeType { Name = "given_name", Value = usuario.Nombre}
                     }
                 };
-                var response = await _cognitoClient.SignUpAsync(request);
+
+                var response = await _cognitoClient.AdminCreateUserAsync(request);
+
+                usuario.CognitoId = response.User.Attributes
+                                .First(a => a.Name == "sub").Value;
+
+                if (usuario == null) { throw new ResourceNotFoundException($"Error"); }
+                
+                await _usuarioService.AddUsuario(usuario);
 
                 return new AuthResponse
                 {
                     IsSuccess = true,
                     Message = "Usuario registrado correctamente",
-                    UserId = response.UserSub
+                    UserId = response.User.Attributes
+                .First(a => a.Name == "sub").Value,
+
                 };
 
             }
+
             catch (UsernameExistsException)
             {
                 return new AuthResponse { IsSuccess = false, Message = "El usuario ya existe" };
@@ -64,7 +86,7 @@ namespace Ecommerce.Services
                 };
             }
         }
-
+        //No funciona, no se si es por el metodo que no se esta utilizando de manera correcta
         public async Task<AuthResponse> LoginAsync(string email, string password)
         {
             try
@@ -97,7 +119,41 @@ namespace Ecommerce.Services
                 };
             }
         }
-        }
+        //Ver si funciona bien con los ids de cognito 
+        public async Task<UserStatusType> GetAdminUserAsync(string userName)
+        {
+            AdminGetUserRequest userRequest = new AdminGetUserRequest
+            {
+                Username = userName,
+                UserPoolId = _userPoolId,
+            };
 
+            var response = await _cognitoClient.AdminGetUserAsync(userRequest);
+
+            Console.WriteLine($"User status {response.UserStatus}");
+            return response.UserStatus;
+        }
+        //Funciona, pero devuelve los datos medios desorganizados
+        public async Task<List<UserType>> ListUsersAsync()
+        {
+            var userPoolId = _userPoolId;
+
+            var request = new ListUsersRequest
+            {
+                UserPoolId = userPoolId
+            };
+
+            var users = new List<UserType>();
+
+            var usersPaginator = _cognitoClient.Paginators.ListUsers(request);
+            await foreach (var response in usersPaginator.Responses)
+            {
+                users.AddRange(response.Users);
+            }
+
+            return users;
+        }
     }
+
+}
 

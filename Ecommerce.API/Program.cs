@@ -23,9 +23,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         ValidIssuer = $"https://cognito-idp.{builder.Configuration["AWS:Region"]}.amazonaws.com/{builder.Configuration["AWS:UserPoolId"]}",
         ValidateLifetime = true,
         LifetimeValidator = (before, expires, token, param) => expires > DateTime.UtcNow,
-        ValidateAudience = false 
+        ValidateAudience = true, 
+        ValidAudience = builder.Configuration["AWS:AppClientId"], 
+        ValidateIssuerSigningKey = true 
     };
 });
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

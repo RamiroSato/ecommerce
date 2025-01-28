@@ -10,6 +10,7 @@ namespace Ecommerce.Models
     {
         public Guid Id { get; set; }
         public int IdRol { get; set; }
+        public string CognitoId { get; set; }
         public Rol Rol { get; set; }
         public string Nombre { get; set; }
         public string Apellido { get; set; }

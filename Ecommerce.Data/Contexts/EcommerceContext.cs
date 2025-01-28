@@ -49,6 +49,7 @@ namespace Ecommerce.Data.Contexts
                 u.HasKey(u => u.Id);
                 u.Property(u => u.Id).ValueGeneratedOnAdd();
                 u.Property(u => u.IdRol).IsRequired();
+                u.Property(u => u.CognitoId).IsRequired();
                 u.Property(u => u.Nombre).IsRequired();
                 u.Property(u => u.Apellido).IsRequired();
                 u.Property(u => u.Password).IsRequired();

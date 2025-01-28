@@ -21,6 +21,7 @@ namespace Ecommerce.Services
             var usuarioToAdd = new Usuario()
             {
                 IdRol = usuarioDto.IdRol,
+                CognitoId = usuarioDto.CognitoId,
                 Nombre = usuarioDto.Nombre,
                 Apellido = usuarioDto.Apellido,
                 Password = usuarioDto.Password,
