@@ -45,39 +45,7 @@ namespace Ecommerce.API.Controllers
             var result = await _authService.LoginAsync(request.Email, request.Password);
             return Ok(result);
         }
-
-
-
-        [HttpGet("id")]
-        public async Task<IActionResult> Get(string userName)
-        {
-
-            var user = await _authService.GetAdminUserAsync(userName);
-
-            return Ok(user);
-
-        }
-
-        [HttpGet("Get-All")]
-        public async Task<IActionResult> GetAll() 
-        {
-
-            var users = await _authService.ListUsersAsync();
-
-            return Ok(users);
-
-        }
-
-        [HttpPut("id")]
-        public async Task<IActionResult> Put(string email, string oldPassword, string newPassword)
-        {
-
-            var result = await _authService.ChangePasswordAsync(email, oldPassword, newPassword);
-
-            return Ok(result);
-
-
-        }
-
+                       
+        
     }
 }

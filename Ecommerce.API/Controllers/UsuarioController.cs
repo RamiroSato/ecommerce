@@ -19,15 +19,7 @@ namespace Ecommerce.API.Controllers
         {
             _usuarioService = usuarioService;
         }
-
-        // POST: UsuarioController/Create
-        [HttpPost("sing-in")]
-        public async Task<IActionResult> Create([FromBody] UsuarioDto usuario)
-        {
-            await _usuarioService.AddUsuario(usuario);
-            return Ok("User successfully created");
-        }
-
+     
 
         //Metodo para mostrar toda la lista de usuarios de la Base de Datos
         [HttpGet("get-all")]
@@ -68,7 +60,7 @@ namespace Ecommerce.API.Controllers
             {
                 Nombre = usuario.Nombre,
                 Apellido = usuario.Apellido,
-                Email = usuario.Email,
+                Email = usuario.Email
             });
 
             //Retorno del ok y el usuario modificado
