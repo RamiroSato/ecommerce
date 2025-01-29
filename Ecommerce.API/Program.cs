@@ -37,7 +37,10 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
-
+builder.Services.AddScoped<IProductoService, ProductoService>();
+builder.Services.AddScoped<ILoteService, LoteService>();
+builder.Services.AddScoped<IS3Service, S3Service>();
+builder.Services.AddScoped<SecretHasher>();
 
 
 builder.Services.AddDbContext<EcommerceContext>(options =>
@@ -46,9 +49,7 @@ builder.Services.AddDbContext<EcommerceContext>(options =>
         b => b.MigrationsAssembly("Ecommerce.Data") // Ensamblado de migraciones
     )
 );
-builder.Services.AddScoped<IProductoService, ProductoService>();
-builder.Services.AddScoped<ILoteService, LoteService>();
-builder.Services.AddScoped<IS3Service, S3Service>();
+
 
 
 var app = builder.Build();
