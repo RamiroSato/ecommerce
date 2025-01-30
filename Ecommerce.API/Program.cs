@@ -4,10 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using Ecommerce.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
+using Ecommerce.API.Middleware;
 using Amazon.CognitoIdentityProvider;
-using Ecommerce.Models;
-using Ecommerce.API;
+using Amazon.Runtime;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,9 +22,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         ValidIssuer = $"https://cognito-idp.{builder.Configuration["AWS:Region"]}.amazonaws.com/{builder.Configuration["AWS:UserPoolId"]}",
         ValidateLifetime = true,
         LifetimeValidator = (before, expires, token, param) => expires > DateTime.UtcNow,
-        ValidateAudience = true, 
-        ValidAudience = builder.Configuration["AWS:AppClientId"], 
-        ValidateIssuerSigningKey = true 
+        ValidateAudience = true,
+        ValidAudience = builder.Configuration["AWS:AppClientId"],
+        ValidateIssuerSigningKey = true
     };
 });
 
@@ -40,8 +39,15 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IProductoService, ProductoService>();
 builder.Services.AddScoped<ILoteService, LoteService>();
 builder.Services.AddScoped<IS3Service, S3Service>();
-builder.Services.AddScoped<SecretHasher>();
 
+builder.Services.AddSingleton<IAmazonCognitoIdentityProvider>(
+    new AmazonCognitoIdentityProviderClient
+                (
+                new BasicAWSCredentials(
+                builder.Configuration["AWS:Access_key_id"],
+                builder.Configuration["AWS:Secret_access_key"]),
+                Amazon.RegionEndpoint.GetBySystemName(builder.Configuration["AWS:Region"])
+                ));
 
 builder.Services.AddDbContext<EcommerceContext>(options =>
     options.UseSqlServer(

@@ -5,23 +5,19 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Cors;
 using Humanizer;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace Ecommerce.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class UsuarioController : Controller
+    public class UsuarioController(IUsuarioService usuarioService) : Controller
     {
-        private readonly IUsuarioService _usuarioService;
-
-        public UsuarioController(IUsuarioService usuarioService)
-        {
-            _usuarioService = usuarioService;
-        }
-     
+        private readonly IUsuarioService _usuarioService = usuarioService;
 
         //Metodo para mostrar toda la lista de usuarios de la Base de Datos
+        [Authorize(Roles = "Admin")]
         [HttpGet("get-all")]
         public async Task<IActionResult> GetAll()
         {
@@ -32,9 +28,11 @@ namespace Ecommerce.API.Controllers
         }
 
         //Metodo para mostrar un usuario especifico
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUsuarioById(Guid id)
         {
+
             var usuario = await _usuarioService.GetUsuario(id);
             //Si puede encontrar el usuario sin problemas lo retorna en formato dto
             return Ok(usuario);
@@ -52,16 +50,11 @@ namespace Ecommerce.API.Controllers
 
         //Metodo para modificar usuarios
         [HttpPut("id")]
-        public async Task<IActionResult> ModificarUsuario(Guid id, UsuarioDto usuario)
+        public async Task<IActionResult> ModificarUsuario(Guid id, PutUsuarioDto usuario)
         {
 
             //Intenta hacer la modificacion al usuario
-            var resultado = await _usuarioService.UpdateUsuario(id, new PutUsuarioDto()
-            {
-                Nombre = usuario.Nombre,
-                Apellido = usuario.Apellido,
-                Email = usuario.Email
-            });
+            await _usuarioService.UpdateUsuario(id, usuario);
 
             //Retorno del ok y el usuario modificado
             return Ok("User successfully modified");

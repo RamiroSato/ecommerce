@@ -1,33 +1,32 @@
 ﻿using System.Net.Http;
-using Ecommerce.Exceptions;
+using Amazon.CognitoIdentityProvider.Model;
 
-namespace Ecommerce.API
+namespace Ecommerce.API.Middleware;
+
+public class ExceptionHandlingMiddleware(RequestDelegate next)
 {
-    public class ExceptionHandlingMiddleware
+    private readonly RequestDelegate _next = next;
+
+    public async Task Invoke(HttpContext context)
     {
-        private readonly RequestDelegate _next;
-
-        public ExceptionHandlingMiddleware(RequestDelegate next)
+        try
         {
-            _next = next;
+            await _next(context);
         }
-
-        public async Task Invoke(HttpContext context)
+        catch (UsernameExistsException ex)
         {
-            try
-            {
-                await _next(context);
-            }
-            catch (ResourceNotFoundException ex)
-            {
-                context.Response.StatusCode = StatusCodes.Status404NotFound;
-                await context.Response.WriteAsJsonAsync(new { message = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-                await context.Response.WriteAsJsonAsync(new { message = "An unexpected error occurred.", details = ex.Message });
-            }
+            context.Response.StatusCode = StatusCodes.Status400BadRequest;
+            await context.Response.WriteAsJsonAsync(new { message = ex.Message });
+        }
+        catch (Exceptions.ResourceNotFoundException ex)
+        {
+            context.Response.StatusCode = StatusCodes.Status404NotFound;
+            await context.Response.WriteAsJsonAsync(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+            await context.Response.WriteAsJsonAsync(new { message = "An unexpected error occurred.", details = ex.Message });
         }
     }
 }
