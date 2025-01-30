@@ -38,12 +38,10 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 
 
 var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__Connection");
-builder.Configuration["ConnectionStrings:Connection"] = connectionString;
-
 
 builder.Services.AddDbContext<EcommerceContext>(options =>
     options.UseSqlServer(
-        builder.Configuration.GetConnectionString("Connection"),
+        connectionString,
         b => b.MigrationsAssembly("Ecommerce.Data") // Ensamblado de migraciones
     )
 );
