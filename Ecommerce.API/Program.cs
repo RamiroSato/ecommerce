@@ -7,23 +7,34 @@ using Microsoft.IdentityModel.Tokens;
 using Ecommerce.API.Middleware;
 using Amazon.CognitoIdentityProvider;
 using Amazon.Runtime;
+using DotNetEnv;
+
+Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
+var connectionString = Environment.GetEnvironmentVariable("Connection") ?? builder.Configuration.GetConnectionString("Connection");
+var awsRegion = Environment.GetEnvironmentVariable("Region") ?? builder.Configuration["AWS:Region"];
+var awsUserPoolId = Environment.GetEnvironmentVariable("UserPoolId") ?? builder.Configuration["AWS:UserPoolId"];
+var awsAccessKeyId = Environment.GetEnvironmentVariable("AccessKeyId") ?? builder.Configuration["AWS:AccessKeyId"];
+var awsAppClientId = Environment.GetEnvironmentVariable("AppClientId") ?? builder.Configuration["AWS:AppClientId"];
+var awsBucketName = Environment.GetEnvironmentVariable("BucketName") ?? builder.Configuration["AWS:BucketName"];
+var awsClientSecretId = Environment.GetEnvironmentVariable("ClientSecretId") ?? builder.Configuration["AWS:ClientSecretId"];
+var awsSecretAccessKey = Environment.GetEnvironmentVariable("SecretAccessKey") ?? builder.Configuration["AWS:SecretAccessKey"];
 // Add services to the container.
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 .AddJwtBearer(options =>
 {
-    options.Authority = $"https://cognito-idp.{builder.Configuration["AWS:Region"]}.amazonaws.com/{builder.Configuration["AWS:UserPoolId"]}";
+    options.Authority = $"https://cognito-idp.{awsRegion}.amazonaws.com/{awsUserPoolId}";
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
-        ValidIssuer = $"https://cognito-idp.{builder.Configuration["AWS:Region"]}.amazonaws.com/{builder.Configuration["AWS:UserPoolId"]}",
+        ValidIssuer = $"https://cognito-idp.{awsRegion}.amazonaws.com/{awsUserPoolId}",
         ValidateLifetime = true,
         LifetimeValidator = (before, expires, token, param) => expires > DateTime.UtcNow,
         ValidateAudience = true,
-        ValidAudience = builder.Configuration["AWS:AppClientId"],
+        ValidAudience = awsAppClientId,
         ValidateIssuerSigningKey = true
     };
 });
@@ -47,15 +58,17 @@ builder.Services.AddScoped<IS3Service, S3Service>();
 builder.Services.AddSingleton<IAmazonCognitoIdentityProvider>(
     new AmazonCognitoIdentityProviderClient
                 (
-                new BasicAWSCredentials(
-                builder.Configuration["AWS:Access_key_id"],
-                builder.Configuration["AWS:Secret_access_key"]),
-                Amazon.RegionEndpoint.GetBySystemName(builder.Configuration["AWS:Region"])
+                    new BasicAWSCredentials
+                    (
+                        awsAccessKeyId,
+                        awsSecretAccessKey
+                    ),
+                    Amazon.RegionEndpoint.GetBySystemName(awsRegion)
                 ));
 
 builder.Services.AddDbContext<EcommerceContext>(options =>
     options.UseSqlServer(
-        builder.Configuration.GetConnectionString("Connection"),
+        connectionString,
         b => b.MigrationsAssembly("Ecommerce.Data") // Ensamblado de migraciones
     )
 );
