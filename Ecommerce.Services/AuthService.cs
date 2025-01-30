@@ -16,7 +16,7 @@ namespace Ecommerce.Services
         private readonly IAmazonCognitoIdentityProvider _cognitoClient = cognitoClient;
         private readonly IUsuarioService _usuarioService = usuarioService;
         private readonly string _clientId = config.GetSection("AWS:AppClientId").Value;
-        private readonly string _clientSecretId = config.GetSection("AWS:Client_secret_id").Value;
+        private readonly string _clientSecretId = config.GetSection("AWS:ClientSecretId").Value;
 
         public async Task<AuthResponse> RegisterAsync(UsuarioDto usuario)
         {
