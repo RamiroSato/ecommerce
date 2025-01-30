@@ -8,19 +8,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Amazon.Auth.AccessControlPolicy;
+using Ecommerce.Exceptions;
 
 namespace Ecommerce.Services
 {
-    public class ProductoService : IProductoService
+    public class ProductoService(EcommerceContext context, IS3Service s3Service) : IProductoService
     {
-        private readonly EcommerceContext _context;
-        private readonly IS3Service _s3Service;
-
-        public ProductoService(EcommerceContext context, IS3Service s3Service)
-        {
-            _context = context;
-            _s3Service = s3Service;
-        }
+        private readonly EcommerceContext _context = context;
+        private readonly IS3Service _s3Service = s3Service;
 
         public async Task<IEnumerable<ProductoDto>> GetAll()
         {
@@ -133,8 +129,7 @@ namespace Ecommerce.Services
 
             if (producto == null)
             {
-                return null;
-                throw new ArgumentException("No se encontró el producto declarado");
+                throw new ResourceNotFoundException("No se encontró el producto declarado");
             }
 
             producto.TipoProducto.Descripcion = productoActualizado.TipoProducto;
@@ -155,7 +150,8 @@ namespace Ecommerce.Services
 
         public async Task<bool> Delete(Guid id)
         {
-            var producto = await _context.Productos.FindAsync(id);
+            var producto = await _context.Productos.FindAsync(id) ?? 
+                throw new ResourceNotFoundException("Producto To Delete not found.");
 
             _context.Productos.Remove(producto);
             await _context.SaveChangesAsync();

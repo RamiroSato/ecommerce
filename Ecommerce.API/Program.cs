@@ -28,6 +28,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     };
 });
 
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy("Admin", policy => policy.RequireRole("Admin"))
+    .AddPolicy("Cliente", policy => policy.RequireRole("Cliente"));
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -35,6 +38,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
+builder.Services.AddScoped<IRolService, RolService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IProductoService, ProductoService>();
 builder.Services.AddScoped<ILoteService, LoteService>();
@@ -57,8 +61,12 @@ builder.Services.AddDbContext<EcommerceContext>(options =>
 );
 
 
-
 var app = builder.Build();
+
+
+app.UseAuthentication();
+app.UseMiddleware<AuthMiddleware>();
+app.UseAuthorization();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
@@ -84,10 +92,6 @@ using (var scope = app.Services.CreateScope())
 };
 
 app.UseHttpsRedirection();
-
-app.UseAuthentication();
-
-app.UseAuthorization();
 
 app.MapControllers();
 

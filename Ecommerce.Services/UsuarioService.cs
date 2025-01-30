@@ -20,7 +20,7 @@ namespace Ecommerce.Services
 
             var usuarioToAdd = new Usuario()
             {
-                IdRol = usuarioDto.IdRol,
+                IdRol = usuarioDto.IdRol, // TODO: Validar quien puede dar de alta usuarios con roles diferentes
                 CognitoId = usuarioDto.CognitoId,
                 Nombre = usuarioDto.Nombre,
                 Apellido = usuarioDto.Apellido,
@@ -115,17 +115,13 @@ namespace Ecommerce.Services
 
         }
 
-        public async Task<bool> UpdateUsuario(Guid id, PutUsuarioDto usuario)
+        public async Task<bool> UpdateUsuario(Guid id, PutUsuarioDto usuario, string CognitoId)
         {
             //Busca el usuario en la base de datos
-            var usuarioUpdate = await _context.Usuarios.FirstOrDefaultAsync(u => u.Id == id);
+            var usuarioUpdate = await _context.Usuarios.FirstOrDefaultAsync(u => u.Id == id) ?? throw new ResourceNotFoundException($"The user with ID: {id} not found.");
 
-            //Si no lo encuentra se encarga de manejar el error
-            if (usuarioUpdate == null)
-            {
-                // Lanzar una excepción personalizada si no se encuentra el usuario
-                throw new ResourceNotFoundException($"The user with ID: {id} not found.");
-            }
+
+
             //Si el usuario existe lo modifica y devuelve verdadero
             usuarioUpdate.Nombre = usuario.Nombre;
             usuarioUpdate.Apellido = usuario.Apellido;

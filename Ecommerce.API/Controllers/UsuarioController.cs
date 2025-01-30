@@ -18,7 +18,7 @@ namespace Ecommerce.API.Controllers
 
         //Metodo para mostrar toda la lista de usuarios de la Base de Datos
         [Authorize(Roles = "Admin")]
-        [HttpGet("get-all")]
+        [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             //Crea una lista de usuarios por medio de la funcion GetUsuarios del service
@@ -28,7 +28,7 @@ namespace Ecommerce.API.Controllers
         }
 
         //Metodo para mostrar un usuario especifico
-
+        [Authorize(Roles = "Admin,Cliente")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUsuarioById(Guid id)
         {
@@ -39,6 +39,7 @@ namespace Ecommerce.API.Controllers
         }
 
 
+        [Authorize(Roles = "Admin")]
         //Metodo para eliminar un suario especifico
         [HttpDelete("id")]
         public async Task<IActionResult> DeleteUser(Guid id)
@@ -49,12 +50,13 @@ namespace Ecommerce.API.Controllers
         }
 
         //Metodo para modificar usuarios
+
         [HttpPut("id")]
         public async Task<IActionResult> ModificarUsuario(Guid id, PutUsuarioDto usuario)
         {
-
+            var sub = User.FindFirst("sub")?.Value;
             //Intenta hacer la modificacion al usuario
-            await _usuarioService.UpdateUsuario(id, usuario);
+            await _usuarioService.UpdateUsuario(id, usuario, sub);
 
             //Retorno del ok y el usuario modificado
             return Ok("User successfully modified");

@@ -9,12 +9,12 @@ namespace Ecommerce.Data.Contexts
     {
         #region Propiedades
 
-        public DbSet<Usuario>? Usuarios { get; set; }
-        public DbSet<Rol>? Roles { get; set; }
-        public DbSet<TipoProducto>? TipoProductos { get; set; }
-        public DbSet<Producto>? Productos { get; set; }
-        public DbSet<Lote>? Lotes { get; set; }
-        public DbSet<Wishlist>? Wishlists { get; set; }
+        public DbSet<Usuario> Usuarios { get; set; }
+        public DbSet<Rol> Roles { get; set; }
+        public DbSet<TipoProducto> TipoProductos { get; set; }
+        public DbSet<Producto> Productos { get; set; }
+        public DbSet<Lote> Lotes { get; set; }
+        public DbSet<Wishlist> Wishlists { get; set; }
 
         #endregion
 
@@ -31,11 +31,6 @@ namespace Ecommerce.Data.Contexts
                 r.Property(r => r.Descripcion).IsRequired();
                 r.Property(r => r.Activo).HasDefaultValue(true);
                 r.Property(r => r.FechaAlta).IsRequired().HasDefaultValueSql("GETDATE()");
-
-                r.HasMany(r => r.Usuarios)
-                 .WithOne(u => u.Rol)
-                 .HasForeignKey(u => u.IdRol)
-                 .OnDelete(DeleteBehavior.Cascade);
 
             });
             #endregion
@@ -55,6 +50,10 @@ namespace Ecommerce.Data.Contexts
                 u.HasIndex(u => u.Email).IsUnique();
                 u.Property(u => u.Activo).HasDefaultValue(true);
                 u.Property(u => u.FechaAlta).IsRequired().HasDefaultValueSql("GETDATE()");
+
+                u.HasOne(u => u.Rol)
+                .WithMany(r => r.Usuarios)
+                .HasForeignKey(u => u.IdRol);
 
                 u.HasOne(u => u.Wishlist)
                 .WithOne(w => w.Usuario)

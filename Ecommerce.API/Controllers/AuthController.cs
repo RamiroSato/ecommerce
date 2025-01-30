@@ -8,6 +8,7 @@ using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pag
 
 namespace Ecommerce.API.Controllers
 {
+
     [ApiController]
     [Route("api/auth")]
     public class AuthController(IAuthService authService) : ControllerBase
@@ -37,6 +38,6 @@ namespace Ecommerce.API.Controllers
             return Ok(result);
         }
                        
-        
     }
+
 }

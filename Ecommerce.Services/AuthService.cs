@@ -20,7 +20,6 @@ namespace Ecommerce.Services
 
         public async Task<AuthResponse> RegisterAsync(UsuarioDto usuario)
         {
-
             var secretHash = SecretHasher.GenerateSecretHash(usuario.Email, _clientId, _clientSecretId);
             var hashedPassword = SecretHasher.GenerateSecretHash(usuario.Password, _clientSecretId);
 
