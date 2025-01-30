@@ -3,11 +3,11 @@ using Microsoft.EntityFrameworkCore;
 
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Ecommerce.Data.Contexts.Seeds
+namespace Ecommerce.Data.Seeds
 {
     public class RolesSeeds : IEntityTypeConfiguration<Rol>
     {
-        public void Configure(EntityTypeBuilder<Rol> builder) 
+        public void Configure(EntityTypeBuilder<Rol> builder)
         {
             builder.HasData
                 (
@@ -30,7 +30,7 @@ namespace Ecommerce.Data.Contexts.Seeds
 
                 );
 
-        
+
         }
 
     }

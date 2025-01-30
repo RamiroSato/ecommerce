@@ -21,7 +21,7 @@ namespace Ecommerce.Data.Contexts
         #region Metodos
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-
+            #region Roles
             modelBuilder.Entity<Rol>(r =>
             {
                 r.ToTable("Roles");
@@ -38,7 +38,9 @@ namespace Ecommerce.Data.Contexts
                  .OnDelete(DeleteBehavior.Cascade);
 
             });
+            #endregion
 
+            #region Usuarios
             modelBuilder.Entity<Usuario>(u =>
             {
 
@@ -52,9 +54,8 @@ namespace Ecommerce.Data.Contexts
                 u.HasIndex(u => u.Email).IsUnique();
                 u.Property(u => u.Activo).HasDefaultValue(true);
                 u.Property(u => u.FechaAlta).IsRequired().HasDefaultValueSql("GETDATE()");
-
-
             });
+            #endregion
 
             #region TiposProducto
             modelBuilder.Entity<TipoProducto>(tp =>
@@ -64,8 +65,6 @@ namespace Ecommerce.Data.Contexts
                 tp.Property(tp => tp.Activo).IsRequired();
                 tp.Property(tp => tp.FechaAlta).IsRequired().HasDefaultValueSql("GETDATE()");
             });
-
-            modelBuilder.ApplyConfiguration(new TipoProductoSeed());
             #endregion
 
             #region Productos
@@ -87,7 +86,6 @@ namespace Ecommerce.Data.Contexts
                 p.HasMany(p => p.Wishlists)
                 .WithMany(w => w.Productos);
             });
-
             #endregion
 
             #region Lotes
@@ -104,12 +102,13 @@ namespace Ecommerce.Data.Contexts
                 .WithMany(p => p.Lotes)
                 .HasForeignKey(l => l.IdProducto);
             });
+            #endregion
 
+            #region Seeds
             modelBuilder.ApplyConfiguration(new RolesSeeds());
             modelBuilder.ApplyConfiguration(new UsuarioSeed());
+            modelBuilder.ApplyConfiguration(new TipoProductoSeed());
             modelBuilder.ApplyConfiguration(new ProductoSeed());
-            modelBuilder.ApplyConfiguration(new ProductoSeed());
-
             #endregion
         }
         #endregion
