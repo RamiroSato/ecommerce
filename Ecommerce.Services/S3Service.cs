@@ -20,12 +20,13 @@ namespace Ecommerce.Services
     {
         private readonly AmazonS3Client _s3Client;
         private readonly string _bucketName;
+        
 
         public S3Service(IConfiguration configuration)
         {
             _s3Client = new AmazonS3Client(
                 new BasicAWSCredentials(configuration["AccessKeyId"], configuration["SecretAccessKey"]),
-                RegionEndpoint.GetBySystemName(configuration["Region"])
+                RegionEndpoint.GetBySystemName(configuration["AWS:Region"])
                 );
             _bucketName = configuration["AWS_BucketName"];
         }

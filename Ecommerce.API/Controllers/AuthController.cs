@@ -32,9 +32,9 @@ namespace Ecommerce.API.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] RegisterRequest request)
+        public async Task<IActionResult> Login(string email, string password)
         {
-            var result = await _authService.LoginAsync(request.Email, request.Password);
+            var result = await _authService.LoginAsync(email, password);
             return Ok(result);
         }
                        
