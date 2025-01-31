@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 /Ecommerce.Data/Migrations
 /Ecommerce.API/.env
+/.env
