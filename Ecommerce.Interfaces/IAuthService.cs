@@ -6,7 +6,7 @@ namespace Ecommerce.Interfaces
 {
     public interface IAuthService
     {
-        Task<AuthResponse> RegisterAsync(UsuarioDto usuario);
+        Task<AuthResponse> RegisterAsync(AuthDto usuario);
 
         Task<ConfirmSignUpResponse> ConfirmAccount(string email, string confirmAccountToken);
 

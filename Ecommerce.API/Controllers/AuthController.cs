@@ -17,7 +17,7 @@ namespace Ecommerce.API.Controllers
 
         //O no va, o se tiene que modificar para que coincida con el modelo de datos
         [HttpPost("register")]
-        public async Task<IActionResult> Create([FromBody] UsuarioDto usuario)
+        public async Task<IActionResult> Create([FromBody] AuthDto usuario)
         {
             var result = await _authService.RegisterAsync(usuario);
             
