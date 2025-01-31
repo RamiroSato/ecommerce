@@ -24,8 +24,8 @@ namespace Ecommerce.Services
         public S3Service(IConfiguration configuration)
         {
             _s3Client = new AmazonS3Client(
-                new BasicAWSCredentials(configuration["AWS_AccessKeyId"], configuration["AWS_SecretAccessKey"]),
-                RegionEndpoint.GetBySystemName(configuration["AWS_Region"])
+                new BasicAWSCredentials(configuration["AccessKeyId"], configuration["SecretAccessKey"]),
+                RegionEndpoint.GetBySystemName(configuration["Region"])
                 );
             _bucketName = configuration["AWS_BucketName"];
         }

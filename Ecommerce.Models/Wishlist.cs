@@ -11,6 +11,6 @@ namespace Ecommerce.Models
         public Guid Id { get; set; }
         public Guid IdUsuario { get; set; }
         public Usuario Usuario { get; set; }
-        public List<Producto>? Productos { get; set; }
+        public List<Producto> Productos { get; set; }
     }
 }

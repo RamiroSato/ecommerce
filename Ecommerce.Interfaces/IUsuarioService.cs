@@ -8,14 +8,14 @@ namespace Ecommerce.Interfaces
     {
         Task<Usuario> AddUsuario(UsuarioDto usuario);
 
-        Task<Usuario> GetUsuario(Guid id);
+        Task<GetUsuarioDto> GetUsuario(Guid id);
 
-        Task<List<Usuario>> GetUsuarios();
+        Task<List<GetUsuarioDto>> GetUsuarios();
 
-        Task<Usuario> GetUsuarioByEmail(string email);
+        //Task<Usuario> GetUsuarioByEmail(string email);
 
         Task<bool> DeleteUsuario(Guid id);
 
-        Task<bool> UpdateUsuario(Guid id, Usuario usuario);
+        Task<bool> UpdateUsuario(Guid id, PutUsuarioDto usuario, string CognitoId);
     }
 }

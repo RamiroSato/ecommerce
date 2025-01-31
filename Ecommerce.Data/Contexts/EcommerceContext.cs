@@ -11,17 +11,21 @@ namespace Ecommerce.Data.Contexts
 
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<Rol> Roles { get; set; }
-        public DbSet<TipoProducto>? TipoProductos { get; set; }
-        public DbSet<Producto>? Productos { get; set; }
-        public DbSet<Lote>? Lotes { get; set; }
-        public DbSet<Wishlist>? Wishlists { get; set; }
+        public DbSet<TipoProducto> TipoProductos { get; set; }
+        public DbSet<Producto> Productos { get; set; }
+        public DbSet<Lote> Lotes { get; set; }
+        public DbSet<Wishlist> Wishlists { get; set; }
 
         #endregion
 
         #region Metodos
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+<<<<<<< HEAD
             #region Roles
+=======
+            #region Rol
+>>>>>>> nico
             modelBuilder.Entity<Rol>(r =>
             {
                 r.ToTable("Roles");
@@ -32,21 +36,21 @@ namespace Ecommerce.Data.Contexts
                 r.Property(r => r.Activo).HasDefaultValue(true);
                 r.Property(r => r.FechaAlta).IsRequired().HasDefaultValueSql("GETDATE()");
 
-                r.HasMany(r => r.Usuarios)
-                 .WithOne(u => u.Rol)
-                 .HasForeignKey(u => u.IdRol)
-                 .OnDelete(DeleteBehavior.Cascade);
-
             });
             #endregion
 
+<<<<<<< HEAD
             #region Usuarios
+=======
+            #region Usuario
+>>>>>>> nico
             modelBuilder.Entity<Usuario>(u =>
             {
 
                 u.HasKey(u => u.Id);
                 u.Property(u => u.Id).ValueGeneratedOnAdd();
                 u.Property(u => u.IdRol).IsRequired();
+                u.Property(u => u.CognitoId).IsRequired();
                 u.Property(u => u.Nombre).IsRequired();
                 u.Property(u => u.Apellido).IsRequired();
                 u.Property(u => u.Password).IsRequired();
@@ -54,6 +58,18 @@ namespace Ecommerce.Data.Contexts
                 u.HasIndex(u => u.Email).IsUnique();
                 u.Property(u => u.Activo).HasDefaultValue(true);
                 u.Property(u => u.FechaAlta).IsRequired().HasDefaultValueSql("GETDATE()");
+<<<<<<< HEAD
+=======
+
+                u.HasOne(u => u.Rol)
+                .WithMany(r => r.Usuarios)
+                .HasForeignKey(u => u.IdRol);
+
+                u.HasOne(u => u.Wishlist)
+                .WithOne(w => w.Usuario)
+                .HasForeignKey<Wishlist>(w => w.IdUsuario);
+
+>>>>>>> nico
             });
             #endregion
 
@@ -65,6 +81,10 @@ namespace Ecommerce.Data.Contexts
                 tp.Property(tp => tp.Activo).IsRequired();
                 tp.Property(tp => tp.FechaAlta).IsRequired().HasDefaultValueSql("GETDATE()");
             });
+<<<<<<< HEAD
+=======
+
+>>>>>>> nico
             #endregion
 
             #region Productos
@@ -84,7 +104,20 @@ namespace Ecommerce.Data.Contexts
                 .HasForeignKey(p => p.IdTipoProducto);
 
                 p.HasMany(p => p.Wishlists)
-                .WithMany(w => w.Productos);
+                .WithMany(w => w.Productos)
+                .UsingEntity(wp => wp.ToTable("WishlistsProductos"));
+            });
+            #endregion
+
+            #region Wishlist
+            modelBuilder.Entity<Wishlist>(w =>
+            {
+                w.HasKey(w => w.Id);
+                w.Property(w => w.Id).ValueGeneratedOnAdd();
+                w.Property(w => w.IdUsuario).IsRequired();
+
+                w.HasMany(w => w.Productos)
+                .WithMany(p => p.Wishlists);
             });
             #endregion
 
@@ -106,12 +139,13 @@ namespace Ecommerce.Data.Contexts
 
             #region Seeds
             modelBuilder.ApplyConfiguration(new RolesSeeds());
+            modelBuilder.ApplyConfiguration(new TipoProductoSeed());
             modelBuilder.ApplyConfiguration(new UsuarioSeed());
             modelBuilder.ApplyConfiguration(new TipoProductoSeed());
             modelBuilder.ApplyConfiguration(new ProductoSeed());
             #endregion
         }
-        #endregion
 
+        #endregion
     }
 }

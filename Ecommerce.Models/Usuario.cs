@@ -10,6 +10,7 @@ namespace Ecommerce.Models
     {
         public Guid Id { get; set; }
         public int IdRol { get; set; }
+        public string CognitoId { get; set; }
         public Rol Rol { get; set; }
         public string Nombre { get; set; }
         public string Apellido { get; set; }
@@ -17,5 +18,6 @@ namespace Ecommerce.Models
         public string Email { get; set; }
         public bool Activo { get; set; }
         public DateTime FechaAlta { get; set; }
+        public Wishlist Wishlist { get; set; }
     }
 }
