@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Ecommerce.Data.Seeds
+namespace Ecommerce.Data.Contexts.Seeds
 {
     public class TipoProductoSeed : IEntityTypeConfiguration<TipoProducto>
     {
