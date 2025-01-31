@@ -21,11 +21,7 @@ namespace Ecommerce.Data.Contexts
         #region Metodos
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-<<<<<<< HEAD
             #region Roles
-=======
-            #region Rol
->>>>>>> nico
             modelBuilder.Entity<Rol>(r =>
             {
                 r.ToTable("Roles");
@@ -39,11 +35,9 @@ namespace Ecommerce.Data.Contexts
             });
             #endregion
 
-<<<<<<< HEAD
+
             #region Usuarios
-=======
-            #region Usuario
->>>>>>> nico
+
             modelBuilder.Entity<Usuario>(u =>
             {
 
@@ -58,8 +52,6 @@ namespace Ecommerce.Data.Contexts
                 u.HasIndex(u => u.Email).IsUnique();
                 u.Property(u => u.Activo).HasDefaultValue(true);
                 u.Property(u => u.FechaAlta).IsRequired().HasDefaultValueSql("GETDATE()");
-<<<<<<< HEAD
-=======
 
                 u.HasOne(u => u.Rol)
                 .WithMany(r => r.Usuarios)
@@ -69,7 +61,7 @@ namespace Ecommerce.Data.Contexts
                 .WithOne(w => w.Usuario)
                 .HasForeignKey<Wishlist>(w => w.IdUsuario);
 
->>>>>>> nico
+
             });
             #endregion
 
@@ -81,10 +73,7 @@ namespace Ecommerce.Data.Contexts
                 tp.Property(tp => tp.Activo).IsRequired();
                 tp.Property(tp => tp.FechaAlta).IsRequired().HasDefaultValueSql("GETDATE()");
             });
-<<<<<<< HEAD
-=======
 
->>>>>>> nico
             #endregion
 
             #region Productos
@@ -141,7 +130,6 @@ namespace Ecommerce.Data.Contexts
             modelBuilder.ApplyConfiguration(new RolesSeeds());
             modelBuilder.ApplyConfiguration(new TipoProductoSeed());
             modelBuilder.ApplyConfiguration(new UsuarioSeed());
-            modelBuilder.ApplyConfiguration(new TipoProductoSeed());
             modelBuilder.ApplyConfiguration(new ProductoSeed());
             #endregion
         }

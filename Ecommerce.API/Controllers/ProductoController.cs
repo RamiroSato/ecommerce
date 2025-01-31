@@ -9,6 +9,8 @@ using Ecommerce.Data.Contexts;
 using Ecommerce.Models;
 using Ecommerce.Interfaces;
 using Ecommerce.DTO;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Ecommerce.API.Controllers
 {
@@ -24,6 +26,7 @@ namespace Ecommerce.API.Controllers
         }
 
         // GET: api/Producto
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Producto>>> GetProductos()
         {
@@ -32,6 +35,7 @@ namespace Ecommerce.API.Controllers
         }
 
         // SEARCH: api/BuscarProducto
+        [Authorize(Roles = "Admin,Cliente")]
         [HttpGet("buscar")]
         public async Task<ActionResult<PaginacionResultado<ProductoUpdateDto>>> BuscarProductos(
             [FromQuery] string? Tipo,
@@ -44,6 +48,7 @@ namespace Ecommerce.API.Controllers
         }
 
         // GET: api/Producto/5
+        [Authorize(Roles = "Admin")]
         [HttpGet("{id}")]
         public async Task<ActionResult<Producto>> GetProducto(Guid id)
         {
@@ -59,6 +64,7 @@ namespace Ecommerce.API.Controllers
 
         // PUT: api/Producto/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutProducto(Guid id, ProductoUpdateDto productoActualizado)
         {
@@ -74,6 +80,7 @@ namespace Ecommerce.API.Controllers
 
         // POST: api/Producto
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<Producto>> PostProducto(ProductoInsertDto insertDto)
         {
@@ -84,6 +91,7 @@ namespace Ecommerce.API.Controllers
         }
 
         // DELETE: api/Producto/5
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProducto(Guid id)
         {
