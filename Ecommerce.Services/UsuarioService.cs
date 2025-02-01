@@ -40,12 +40,15 @@ namespace Ecommerce.Services
             return usuarioToAdd;
         }
 
-        public async Task<GetUsuarioDto> GetUsuario(Guid id)
+        public async Task<GetUsuarioDto> GetUsuario(Guid id, string? CognitoId)
         {
-            var usuario = await _context.Usuarios.FindAsync(id);
 
-            if (usuario == null)
-                throw new ResourceNotFoundException($"User with Id {id} not found.");
+            var usuario = await _context.Usuarios.FindAsync(id) ?? throw new ResourceNotFoundException($"User with Id {id} not found.");
+            var usuarioCognito = await _context.Usuarios.FirstOrDefaultAsync(u => u.CognitoId == CognitoId) ?? throw new UnauthorizedAccessException("You are not authorized to see this user.");
+
+            //if user is not admin and is trying to see another user that is not themself
+            if (usuario.CognitoId != CognitoId && usuarioCognito.IdRol != 1)
+                throw new UnauthorizedAccessException("You are not authorized to see this user.");
 
             return new GetUsuarioDto()
             {
@@ -115,12 +118,15 @@ namespace Ecommerce.Services
 
         }
 
-        public async Task<bool> UpdateUsuario(Guid id, PutUsuarioDto usuario, string CognitoId)
+        public async Task<bool> UpdateUsuario(Guid id, PutUsuarioDto usuario, string? CognitoId)
         {
             //Busca el usuario en la base de datos
             var usuarioUpdate = await _context.Usuarios.FirstOrDefaultAsync(u => u.Id == id) ?? throw new ResourceNotFoundException($"The user with ID: {id} not found.");
+            var usuarioCognito = await _context.Usuarios.FirstOrDefaultAsync(u => u.CognitoId == CognitoId) ?? throw new UnauthorizedAccessException("You are not authorized to modify this user.");
 
-
+            //if user is not admin and is trying to modify another user that is not themself
+            if (usuarioUpdate.CognitoId != CognitoId && usuarioCognito.IdRol != 1)
+                throw new UnauthorizedAccessException("You are not authorized to modify this user.");
 
             //Si el usuario existe lo modifica y devuelve verdadero
             usuarioUpdate.Nombre = usuario.Nombre;

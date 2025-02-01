@@ -8,7 +8,7 @@ namespace Ecommerce.Interfaces
     {
         Task<Usuario> AddUsuario(UsuarioDto usuario);
 
-        Task<GetUsuarioDto> GetUsuario(Guid id);
+        Task<GetUsuarioDto> GetUsuario(Guid id, string? CognitoId);
 
         Task<List<GetUsuarioDto>> GetUsuarios();
 
@@ -16,6 +16,6 @@ namespace Ecommerce.Interfaces
 
         Task<bool> DeleteUsuario(Guid id);
 
-        Task<bool> UpdateUsuario(Guid id, PutUsuarioDto usuario, string CognitoId);
+        Task<bool> UpdateUsuario(Guid id, PutUsuarioDto usuario, string? CognitoId);
     }
 }

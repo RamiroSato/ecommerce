@@ -13,6 +13,11 @@ public class ExceptionHandlingMiddleware(RequestDelegate next)
         {
             await _next(context);
         }
+        catch (UnauthorizedAccessException ex)
+        {
+            context.Response.StatusCode = StatusCodes.Status403Forbidden;
+            await context.Response.WriteAsJsonAsync(new { message = ex.Message });
+        }
         catch (NotAuthorizedException ex)
         {
             context.Response.StatusCode = StatusCodes.Status401Unauthorized;

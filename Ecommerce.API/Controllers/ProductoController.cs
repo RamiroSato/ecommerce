@@ -48,7 +48,7 @@ namespace Ecommerce.API.Controllers
         }
 
         // GET: api/Producto/5
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Cliente")]
         [HttpGet("{id}")]
         public async Task<ActionResult<Producto>> GetProducto(Guid id)
         {

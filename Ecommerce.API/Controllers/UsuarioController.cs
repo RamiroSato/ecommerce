@@ -32,8 +32,7 @@ namespace Ecommerce.API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUsuarioById(Guid id)
         {
-
-            var usuario = await _usuarioService.GetUsuario(id);
+            var usuario = await _usuarioService.GetUsuario(id, HttpContext.Items["cognitoId"].ToString());
             //Si puede encontrar el usuario sin problemas lo retorna en formato dto
             return Ok(usuario);
         }
@@ -50,13 +49,12 @@ namespace Ecommerce.API.Controllers
         }
 
         //Metodo para modificar usuarios
-
+        [Authorize(Roles = "Admin,Cliente")]
         [HttpPut("id")]
         public async Task<IActionResult> ModificarUsuario(Guid id, PutUsuarioDto usuario)
         {
-            var sub = User.FindFirst("sub")?.Value;
             //Intenta hacer la modificacion al usuario
-            await _usuarioService.UpdateUsuario(id, usuario, sub);
+            await _usuarioService.UpdateUsuario(id, usuario, HttpContext.Items["cognitoId"].ToString());
 
             //Retorno del ok y el usuario modificado
             return Ok("User successfully modified");

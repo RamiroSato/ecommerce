@@ -13,7 +13,7 @@ namespace Ecommerce.API.Middleware
             {
                 var firstclaim = context.User.Identities.First();
                 var cognitoId = firstclaim.FindFirst("cognito:username")?.Value;
-
+                context.Items["cognitoId"] = cognitoId;
                 var rol = await rolService.GetRolByCognitoIdAsync(cognitoId);
 
                 if (!string.IsNullOrEmpty(rol.Descripcion))
