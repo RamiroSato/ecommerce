@@ -17,10 +17,11 @@ var connectionString = Environment.GetEnvironmentVariable("Connection") ?? build
 var awsRegion = Environment.GetEnvironmentVariable("Region") ?? builder.Configuration["AWS:Region"];
 var awsUserPoolId = Environment.GetEnvironmentVariable("UserPoolId") ?? builder.Configuration["AWS:UserPoolId"];
 var awsAccessKeyId = Environment.GetEnvironmentVariable("AccessKeyId") ?? builder.Configuration["AWS:AccessKeyId"];
-var awsAppClientId = Environment.GetEnvironmentVariable("AppClientId") ?? builder.Configuration["AWS:AppClientId"];
+builder.Configuration["AWS:AppClientId"] = Environment.GetEnvironmentVariable("AppClientId") ?? builder.Configuration["AWS:AppClientId"];
 var awsBucketName = Environment.GetEnvironmentVariable("BucketName") ?? builder.Configuration["AWS:BucketName"];
-var awsClientSecretId = Environment.GetEnvironmentVariable("ClientSecretId") ?? builder.Configuration["AWS:ClientSecretId"];
+builder.Configuration["AWS:ClientSecretId"] = Environment.GetEnvironmentVariable("ClientSecretId") ?? builder.Configuration["AWS:ClientSecretId"];
 var awsSecretAccessKey = Environment.GetEnvironmentVariable("SecretAccessKey") ?? builder.Configuration["AWS:SecretAccessKey"];
+
 // Add services to the container.
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -34,7 +35,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         ValidateLifetime = true,
         LifetimeValidator = (before, expires, token, param) => expires > DateTime.UtcNow,
         ValidateAudience = true,
-        ValidAudience = awsAppClientId,
+        ValidAudience = builder.Configuration["AWS:AppClientId"],
         ValidateIssuerSigningKey = true
     };
 });
