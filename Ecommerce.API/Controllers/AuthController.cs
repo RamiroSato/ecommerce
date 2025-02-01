@@ -17,7 +17,7 @@ namespace Ecommerce.API.Controllers
 
         //O no va, o se tiene que modificar para que coincida con el modelo de datos
         [HttpPost("register")]
-        public async Task<IActionResult> Create([FromBody] UsuarioDto usuario)
+        public async Task<IActionResult> Create([FromBody] AuthDto usuario)
         {
             var result = await _authService.RegisterAsync(usuario);
             
@@ -32,9 +32,9 @@ namespace Ecommerce.API.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] RegisterRequest request)
+        public async Task<IActionResult> Login(string email, string password)
         {
-            var result = await _authService.LoginAsync(request.Email, request.Password);
+            var result = await _authService.LoginAsync(email, password);
             return Ok(result);
         }
                        

@@ -18,7 +18,7 @@ namespace Ecommerce.Services
         private readonly string _clientId = config.GetSection("AWS:AppClientId").Value;
         private readonly string _clientSecretId = config.GetSection("AWS:ClientSecretId").Value;
 
-        public async Task<AuthResponse> RegisterAsync(UsuarioDto usuario)
+        public async Task<AuthResponse> RegisterAsync(AuthDto usuario)
         {
             var secretHash = SecretHasher.GenerateSecretHash(usuario.Email, _clientId, _clientSecretId);
             var hashedPassword = SecretHasher.GenerateSecretHash(usuario.Password, _clientSecretId);
@@ -36,12 +36,19 @@ namespace Ecommerce.Services
 
             var response = await _cognitoClient.SignUpAsync(request);
 
-            usuario.CognitoId = response.UserSub;
-            usuario.Password = hashedPassword;
+            var usuarioDto = new UsuarioDto
+            {
+                IdRol = 2,
+                CognitoId = response.UserSub,
+                Nombre = usuario.Nombre,
+                Apellido = usuario.Apellido,
+                Password = hashedPassword,
+                Email = usuario.Email
 
+            };
             if (usuario == null) { throw new ResourceNotFoundException($"Error"); }
 
-            await _usuarioService.AddUsuario(usuario);
+            await _usuarioService.AddUsuario(usuarioDto);
 
             return new AuthResponse
             {
