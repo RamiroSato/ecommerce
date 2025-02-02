@@ -77,32 +77,7 @@ namespace Ecommerce.Services
             ).ToList();
             //intenta retornar la lista de usuarios
             return listaUsuariosDto;
-
-
-
         }
-
-        //public async Task<Usuario> GetUsuarioByEmail(string email)
-        //{
-
-        //    try
-        //    {
-        //        //Intenta retornar el usuario del email correspondiente
-        //        return await _context.Usuarios.FirstOrDefaultAsync(u => email == u.Email);
-
-        //    }
-        //    catch (DbUpdateException ex)
-        //    {
-        //        // Captura detalles específicos de la base de datos
-        //        throw new Exception("Error al guardar el usuario en la base de datos", ex);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        // Captura otros errores
-        //        throw new Exception("Ocurrió un error inesperado", ex);
-        //    }
-
-        //}
 
         public async Task<bool> DeleteUsuario(Guid id)
         {
@@ -136,7 +111,6 @@ namespace Ecommerce.Services
             await _context.SaveChangesAsync();
             return true;
         }
-
     }
 }
 

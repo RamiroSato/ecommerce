@@ -54,7 +54,7 @@ namespace Ecommerce.API.Controllers
         public async Task<IActionResult> ModificarUsuario(Guid id, PutUsuarioDto usuario)
         {
             //Intenta hacer la modificacion al usuario
-            await _usuarioService.UpdateUsuario(id, usuario, HttpContext.Items["cognitoId"].ToString());
+            await _usuarioService.UpdateUsuario(id, usuario, HttpContext.Items["cognitoId"]?.ToString());
 
             //Retorno del ok y el usuario modificado
             return Ok("User successfully modified");
