@@ -21,6 +21,7 @@ namespace Ecommerce.API.Controllers
         private readonly IProductoService _productoService = productoService;
 
         // SEARCH: api/BuscarProducto
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProductoDto>>> GetAll()
         {
