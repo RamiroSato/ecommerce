@@ -46,7 +46,14 @@ namespace Ecommerce.Services
 
         public async Task<Producto> GetById(Guid id)
         {
-            return await _context.Productos.FirstOrDefaultAsync(p => p.Id == id);
+            var producto = await _context.Productos.FirstOrDefaultAsync(p => p.Id == id);
+
+            if (producto == null)
+            {
+                throw new ResourceNotFoundException("No se encontró el producto declarado");
+            }
+
+            return producto;
         }
 
         private readonly int _records = 5;
@@ -76,6 +83,7 @@ namespace Ecommerce.Services
                             .Take(_records)
                             .Select(p => new ProductoPaginacionDto
                             {
+                                Id = p.Id,
                                 TipoProducto = p.TipoProducto.Descripcion,
                                 Imagen = p.Imagen,
                                 Descripcion = p.Descripcion,
@@ -150,13 +158,12 @@ namespace Ecommerce.Services
 
         public async Task<bool> Delete(Guid id)
         {
-            var producto = await _context.Productos.FindAsync(id) ?? 
-                throw new ResourceNotFoundException("Producto To Delete not found.");
+            var producto = await _context.Productos.FindAsync(id) ??
+                throw new ResourceNotFoundException("Producto no encontrado.");
 
             _context.Productos.Remove(producto);
             await _context.SaveChangesAsync();
             return true;
-
         }
     }
 }

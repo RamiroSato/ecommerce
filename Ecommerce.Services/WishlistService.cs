@@ -11,174 +11,198 @@ using System.Threading.Tasks;
 using Ecommerce.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 
-namespace Ecommerce.Services
+namespace Ecommerce.Services;
+
+public class WishlistService(EcommerceContext context) : IWishlistService
 {
-    public class WishlistService(EcommerceContext context) : IWishlistService
+    readonly EcommerceContext _context = context;
+    readonly DbSet<Wishlist> _wishlists = context.Wishlists;
+    readonly DbSet<Usuario> _usuarios = context.Usuarios;
+    readonly DbSet<Producto> _productos = context.Productos;
+
+    private async Task<bool> CheckCognitoId(string? requestCognitoId, string wishlistCognitoId)
     {
-        readonly EcommerceContext _context = context;
-        readonly DbSet<Wishlist> _wishlists = context.Wishlists;
-        readonly DbSet<Usuario> _usuarios = context.Usuarios;
-        readonly DbSet<Producto> _productos = context.Productos;
+        var usuarioCognito = await _usuarios
+            .FirstOrDefaultAsync(u => u.CognitoId == requestCognitoId)
+            ?? throw new UnauthorizedAccessException("You are not authorized to modify this user.");
 
-        private async Task<bool> CheckCognitoId(string? requestCognitoId, string wishlistCognitoId)
+        if (wishlistCognitoId != requestCognitoId && usuarioCognito.IdRol != 1)
+            throw new UnauthorizedAccessException("You are not authorized to modify this user.");
+
+        return true;
+    }
+
+
+    public async Task<WishlistDTO> AddProduct(Guid idWishlist, Guid idProducto, string? requestCognitoId)
+    {
+        var wishlist = await _wishlists
+            .Include(w => w.Usuario)
+            .Include(w => w.Productos)
+                .ThenInclude(p => p.TipoProducto)
+            .Where(w => w.Id == idWishlist)
+            .FirstOrDefaultAsync()
+            ?? throw new ResourceNotFoundException("Wishlist not found");
+
+        var producto = await _productos
+            .Include(p => p.TipoProducto)
+            .Where(p => p.Id == idProducto)
+            .FirstOrDefaultAsync()
+            ?? throw new ResourceNotFoundException("Product not found");
+
+        await CheckCognitoId(requestCognitoId, wishlist.Usuario.CognitoId);
+
+        if (!wishlist.Usuario.Activo)
         {
-            var usuarioCognito = await _usuarios
-                .FirstOrDefaultAsync(u => u.CognitoId == requestCognitoId)
-                ?? throw new UnauthorizedAccessException("You are not authorized to modify this user.");
-
-            if (wishlistCognitoId != requestCognitoId && usuarioCognito.IdRol != 1)
-                throw new UnauthorizedAccessException("You are not authorized to modify this user.");
-
-            return true;
+            throw new ResourceNotFoundException("Wishlist's User not available");
         }
 
-
-        public async Task<WishlistDTO> AddProduct(Guid idWishlist, Guid idProducto, string? requestCognitoId)
+        if (!producto.Activo)
         {
-            var wishlist = await _wishlists
-                .Include(w => w.Productos)
-                    .ThenInclude(p => p.TipoProducto)
-                .Where(w => w.Id == idWishlist)
-                .FirstOrDefaultAsync()
-                ?? throw new ResourceNotFoundException("Wishlist not found");
-
-            var producto = await _productos
-                .FindAsync(idProducto)
-                ?? throw new ResourceNotFoundException("Product not found");
-
-            await CheckCognitoId(requestCognitoId, wishlist.Usuario.CognitoId);
-
-            if (!wishlist.Usuario.Activo)
-            {
-                throw new ResourceNotFoundException("Wishlist's User not available");
-            }
-
-            if (!producto.Activo)
-            {
-                throw new ResourceNotFoundException("Product not available");
-            }
-
-            if (wishlist.Productos.Any(p => p.Id == idProducto))
-            {
-                throw new ResourceNotFoundException("Product already in wishlist");
-            }
-
-            wishlist.Productos.Add(producto);
-
-
-            await _context.SaveChangesAsync();
-
-            return new()
-            {
-                Id = wishlist.Id,
-                Productos = [..
-                    wishlist.Productos?.Select(p => new ProductoDto
-                    {
-                        Id = p.Id,
-                        Descripcion = p.Descripcion,
-                        IdTipoProducto = p.IdTipoProducto,
-                        TipoProducto = p.TipoProducto.Descripcion,
-                        Imagen = p.Imagen,
-                        Precio = p.Precio,
-                        Activo = p.Activo
-                    }).ToList()
-                ]
-            };
+            throw new ResourceNotFoundException("Product not available");
         }
 
-        public async Task<Wishlist> CreateWishlist(Guid idUsuario, string? requestCognitoId)
+        if (wishlist.Productos.Any(p => p.Id == idProducto))
         {
-            var query = _usuarios.AsQueryable()
-                .Include(u => u.Wishlist)
-                .Where(u => u.Id == idUsuario);
-
-            var usuario = await query.FirstOrDefaultAsync() ?? throw new ResourceNotFoundException("User not found");
-
-            await CheckCognitoId(requestCognitoId, usuario.CognitoId);
-
-            if (!usuario.Activo)
-            {
-                throw new ResourceNotFoundException("User not available");
-            }
-
-            if (usuario.Wishlist != null)
-            {
-                throw new ResourceAlreadyExistsException("User already has a wishlist");
-            }
-
-            var wishlist = new Wishlist
-            {
-                IdUsuario = idUsuario,
-                Usuario = usuario,
-                Productos = []
-            };
-
-            _wishlists.Add(wishlist);
-            await _context.SaveChangesAsync();
-            return wishlist;
+            throw new ResourceNotFoundException("Product already in wishlist");
         }
 
-        public async Task<bool> DeleteWishlist(Guid id, string? requestCognitoId)
+        wishlist.Productos.Add(producto);
+
+
+        await _context.SaveChangesAsync();
+
+        return new()
         {
-            var wishlist = await _wishlists.FindAsync(id) ?? throw new ResourceNotFoundException("Wishlist not found");
+            Id = wishlist.Id,
+            Productos = [..
+                wishlist.Productos?.Select(p => new ProductoDto
+                {
+                    Id = p.Id,
+                    Descripcion = p.Descripcion,
+                    IdTipoProducto = p.IdTipoProducto,
+                    TipoProducto = p.TipoProducto.Descripcion,
+                    Imagen = p.Imagen,
+                    Precio = p.Precio,
+                    Activo = p.Activo
+                }).ToList()
+            ]
+        };
+    }
 
-            await CheckCognitoId(requestCognitoId, wishlist.Usuario.CognitoId);
+    public async Task<Wishlist> CreateWishlist(Guid idUsuario, string? requestCognitoId)
+    {
+        var query = _usuarios.AsQueryable()
+            .Include(u => u.Wishlist)
+            .Where(u => u.Id == idUsuario);
 
-            _wishlists.Remove(wishlist);
-            await _context.SaveChangesAsync();
-            return true;
+        var usuario = await query.FirstOrDefaultAsync() ?? throw new ResourceNotFoundException("User not found");
+
+        await CheckCognitoId(requestCognitoId, usuario.CognitoId);
+
+        if (!usuario.Activo)
+        {
+            throw new ResourceNotFoundException("User not available");
         }
 
-        public async Task<WishlistDTO> GetWishlist(Guid? id, Guid? idUsuario, string? requestCognitoId)
+        if (usuario.Wishlist != null)
         {
-            if (id == null && idUsuario == null)
-                throw new ArgumentException("At least one of id or idUsuario must be provided");
-
-            if(id != null && idUsuario != null)
-                throw new ArgumentException("Only one of id or idUsuario must be provided");
-
-            var wishlist = await _wishlists
-                .Include(w => w.Usuario)
-                .Include(w => w.Productos)
-                    .ThenInclude(p => p.TipoProducto)
-                .Where(w => w.Id == id || w.IdUsuario == idUsuario)
-                .FirstOrDefaultAsync()
-                ?? throw new ResourceNotFoundException("Wishlist not found");
-
-            await CheckCognitoId(requestCognitoId, wishlist.Usuario.CognitoId);
-
-            return new()
-            {
-                Id = wishlist.Id,
-                Productos = [..
-                    wishlist.Productos?.Select(p => new ProductoDto
-                    {
-                        Id = p.Id,
-                        Descripcion = p.Descripcion,
-                        IdTipoProducto = p.IdTipoProducto,
-                        TipoProducto = p.TipoProducto.Descripcion,
-                        Imagen = p.Imagen,
-                        Precio = p.Precio,
-                        Activo = p.Activo
-                    }).ToList()
-                ]
-            };
+            throw new ResourceAlreadyExistsException("User already has a wishlist");
         }
 
-        public async Task<Wishlist> RemoveProduct(Guid idWishlist, Guid idProducto, string? requestCognitoId)
+        var wishlist = new Wishlist
         {
-            var wishlist = await _wishlists.FindAsync(idWishlist) ?? throw new ResourceNotFoundException("Wishlist not found");
-            var producto = await _productos.FindAsync(idProducto) ?? throw new ResourceNotFoundException("Product not found");
+            IdUsuario = idUsuario,
+            Usuario = usuario,
+            Productos = []
+        };
 
-            await CheckCognitoId(requestCognitoId, wishlist.Usuario.CognitoId);
+        _wishlists.Add(wishlist);
+        await _context.SaveChangesAsync();
+        return wishlist;
+    }
 
-            if (!wishlist.Productos.Any(p => p.Id == idProducto))
-            {
-                throw new ResourceNotFoundException("Product not in wishlist");
-            }
-            wishlist.Productos.Remove(producto);
-            await _context.SaveChangesAsync();
-            return wishlist;
+    public async Task<bool> DeleteWishlist(Guid id, string? requestCognitoId)
+    {
+        var wishlist = await _wishlists.FindAsync(id) ?? throw new ResourceNotFoundException("Wishlist not found");
+
+        await CheckCognitoId(requestCognitoId, wishlist.Usuario.CognitoId);
+
+        _wishlists.Remove(wishlist);
+        await _context.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<WishlistDTO> GetWishlist(Guid? id, Guid? idUsuario, string? requestCognitoId)
+    {
+        if (id == null && idUsuario == null)
+            throw new ArgumentException("At least one of id or idUsuario must be provided");
+
+        if (id != null && idUsuario != null)
+            throw new ArgumentException("Only one of id or idUsuario must be provided");
+
+        var wishlist = await _wishlists
+            .Include(w => w.Usuario)
+            .Include(w => w.Productos)
+                .ThenInclude(p => p.TipoProducto)
+            .Where(w => w.Id == id || w.IdUsuario == idUsuario)
+            .FirstOrDefaultAsync()
+            ?? throw new ResourceNotFoundException("Wishlist not found");
+
+        await CheckCognitoId(requestCognitoId, wishlist.Usuario.CognitoId);
+
+        return new()
+        {
+            Id = wishlist.Id,
+            Productos = [..
+                wishlist.Productos?.Select(p => new ProductoDto
+                {
+                    Id = p.Id,
+                    Descripcion = p.Descripcion,
+                    IdTipoProducto = p.IdTipoProducto,
+                    TipoProducto = p.TipoProducto.Descripcion,
+                    Imagen = p.Imagen,
+                    Precio = p.Precio,
+                    Activo = p.Activo
+                }).ToList()
+            ]
+        };
+    }
+
+    public async Task<WishlistDTO> RemoveProduct(Guid idWishlist, Guid idProducto, string? requestCognitoId)
+    {
+        var wishlist = await _wishlists
+            .Include(w => w.Usuario)
+            .Include(w => w.Productos)
+                .ThenInclude(p => p.TipoProducto)
+            .Where(w => w.Id == idWishlist)
+            .FirstOrDefaultAsync()
+            ?? throw new ResourceNotFoundException("Wishlist not found");
+        var producto = await _productos.FindAsync(idProducto) ?? throw new ResourceNotFoundException("Product not found");
+
+        await CheckCognitoId(requestCognitoId, wishlist.Usuario.CognitoId);
+
+        if (!wishlist.Productos.Any(p => p.Id == idProducto))
+        {
+            throw new ResourceNotFoundException("Product not in wishlist");
         }
+
+        wishlist.Productos.Remove(producto);
+        await _context.SaveChangesAsync();
+        return new()
+        {
+            Id = wishlist.Id,
+            Productos = [..
+                wishlist.Productos?.Select(p => new ProductoDto
+                {
+                    Id = p.Id,
+                    Descripcion = p.Descripcion,
+                    IdTipoProducto = p.IdTipoProducto,
+                    TipoProducto = p.TipoProducto.Descripcion,
+                    Imagen = p.Imagen,
+                    Precio = p.Precio,
+                    Activo = p.Activo
+                }).ToList()
+            ]
+        };
     }
 }

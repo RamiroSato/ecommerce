@@ -22,13 +22,20 @@ namespace Ecommerce.API.Controllers
 
         // SEARCH: api/BuscarProducto
         [HttpGet]
+        public async Task<ActionResult<IEnumerable<ProductoDto>>> GetAll()
+        {
+            var resultado = await _productoService.GetAll();
+            return Ok(resultado);
+        }
+
+        // SEARCH: api/BuscarProducto
+        [HttpGet("buscar")]
         public async Task<ActionResult<PaginacionResultado<ProductoUpdateDto>>> BuscarProductos(
             [FromQuery] string? Tipo,
             [FromQuery] int? Precio,
             [FromQuery] int? Page)
         {
             var resultado = await _productoService.BuscarProductos(Tipo, Precio, Page);
-
             return Ok(resultado);
         }
 
@@ -37,12 +44,6 @@ namespace Ecommerce.API.Controllers
         public async Task<ActionResult<Producto>> GetProducto(Guid id)
         {
             var producto = await _productoService.GetById(id);
-
-            if (producto == null)
-            {
-                return NotFound();
-            }
-
             return producto;
         }
 
@@ -53,12 +54,6 @@ namespace Ecommerce.API.Controllers
         public async Task<IActionResult> PutProducto(Guid id, ProductoUpdateDto productoActualizado)
         {
             var actualizado = await _productoService.Update(id, productoActualizado);
-
-            if(actualizado == null)
-            {
-                return NotFound("No se pudo actualizar el producto");
-            }
-
             return Ok(actualizado);
         }
 
@@ -77,15 +72,7 @@ namespace Ecommerce.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProducto(Guid id)
         {
-            var producto = await _productoService.GetById(id);
-
-            if (producto == null)
-            {
-                return NotFound("Producto no encontrado");
-            }
-
             await _productoService.Delete(id);
-
             return Ok($"Se borró el producto con id {id} exitosamente");
         }
     }
