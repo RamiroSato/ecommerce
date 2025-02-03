@@ -6,11 +6,8 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.DTO
 {
-    public class GetUsuarioDto
+    public class UsuarioGetDto
     {
-
-       
-
         public string Nombre { get; set; }
 
         public string Apellido { get; set; }

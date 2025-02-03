@@ -6,7 +6,7 @@ namespace Ecommerce.Data.Contexts.Seeds
 {
     public class TipoProductoSeed : IEntityTypeConfiguration<TipoProducto>
     {
-        public void Configure(EntityTypeBuilder<TipoProducto> builder) 
+        public void Configure(EntityTypeBuilder<TipoProducto> builder)
         {
             builder.HasData(
                 new TipoProducto

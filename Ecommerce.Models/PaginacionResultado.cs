@@ -11,7 +11,7 @@ namespace Ecommerce.Models
         public int TotalPaginas { get; set; }
         public int PaginaActual { get; set; }
         public int ProductosTotales { get; set; }
-        public List<T> Productos { get; set; } = new List<T>();
+        public List<T> Productos { get; set; } = [];
     }
 
 }

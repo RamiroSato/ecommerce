@@ -9,11 +9,12 @@ namespace Ecommerce.Data.Contexts.Seeds
         public void Configure(EntityTypeBuilder<Producto> builder)
         {
             builder.HasData(
-                new Producto { 
-                    Id = Guid.Parse("11111111-1111-1111-1111-111111111111"), 
-                    IdTipoProducto = 1, 
+                new Producto
+                {
+                    Id = Guid.Parse("11111111-1111-1111-1111-111111111111"),
+                    IdTipoProducto = 1,
                     Imagen = "https://caradec-lorefice-sato-bucket.s3.us-east-2.amazonaws.com/c451baf0-fd10-401c-9c3b-5ea3d79a6420.jpg",
-                    Descripcion = "Chomba Lacoste Blanca: es un ícono de elegancia casual. Confeccionada en algodón premium, ofrece una textura suave y transpirable, perfecta para cualquier ocasión. Su diseño clásico incluye el emblemático logo del cocodrilo bordado en el pecho, cuello tipo polo con botones ajustables y un ajuste regular que se adapta cómodamente a diferentes tipos de cuerpo.", 
+                    Descripcion = "Chomba Lacoste Blanca: es un ícono de elegancia casual. Confeccionada en algodón premium, ofrece una textura suave y transpirable, perfecta para cualquier ocasión. Su diseño clásico incluye el emblemático logo del cocodrilo bordado en el pecho, cuello tipo polo con botones ajustables y un ajuste regular que se adapta cómodamente a diferentes tipos de cuerpo.",
                     Precio = 60000,
                 },
                 new Producto

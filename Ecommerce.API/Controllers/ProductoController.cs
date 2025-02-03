@@ -9,26 +9,24 @@ using Ecommerce.Data.Contexts;
 using Ecommerce.Models;
 using Ecommerce.Interfaces;
 using Ecommerce.DTO;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Ecommerce.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ProductoController : ControllerBase
+    public class ProductoController(IProductoService productoService) : ControllerBase
     {
-        private readonly IProductoService _productoService;
-        
-        public ProductoController(IProductoService productoService)
-        {
-            _productoService = productoService;
-        }
+        private readonly IProductoService _productoService = productoService;
 
-        // GET: api/Producto
+        // SEARCH: api/BuscarProducto
+        [Authorize(Roles = "Admin")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Producto>>> GetProductos()
+        public async Task<ActionResult<IEnumerable<ProductoDto>>> GetAll()
         {
-            var productos = await _productoService.GetAll();
-            return Ok(productos);
+            var resultado = await _productoService.GetAll();
+            return Ok(resultado);
         }
 
         // SEARCH: api/BuscarProducto
@@ -39,7 +37,6 @@ namespace Ecommerce.API.Controllers
             [FromQuery] int? Page)
         {
             var resultado = await _productoService.BuscarProductos(Tipo, Precio, Page);
-
             return Ok(resultado);
         }
 
@@ -48,54 +45,35 @@ namespace Ecommerce.API.Controllers
         public async Task<ActionResult<Producto>> GetProducto(Guid id)
         {
             var producto = await _productoService.GetById(id);
-
-            if (producto == null)
-            {
-                return NotFound();
-            }
-
             return producto;
         }
 
         // PUT: api/Producto/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutProducto(Guid id, ProductoUpdateDto productoActualizado)
         {
             var actualizado = await _productoService.Update(id, productoActualizado);
-
-            if(actualizado == null)
-            {
-                return NotFound("No se pudo actualizar el producto");
-            }
-
             return Ok(actualizado);
         }
 
         // POST: api/Producto
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<Producto>> PostProducto(ProductoInsertDto insertDto)
         {
-            Producto producto;
             var productoCreado = await _productoService.Create(insertDto);
-
             return CreatedAtAction("GetProducto", new { id = productoCreado.Id }, productoCreado);
         }
 
         // DELETE: api/Producto/5
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProducto(Guid id)
         {
-            var producto = await _productoService.GetById(id);
-
-            if (producto == null)
-            {
-                return NotFound("Producto no encontrado");
-            }
-
             await _productoService.Delete(id);
-
             return Ok($"Se borró el producto con id {id} exitosamente");
         }
     }

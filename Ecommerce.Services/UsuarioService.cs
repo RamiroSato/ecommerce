@@ -39,14 +39,17 @@ namespace Ecommerce.Services
             return usuarioToAdd;
         }
 
-        public async Task<GetUsuarioDto> GetUsuario(Guid id)
+        public async Task<UsuarioGetDto> GetUsuario(Guid id, string? CognitoId)
         {
-            var usuario = await _context.Usuarios.FindAsync(id);
 
-            if (usuario == null)
-                throw new ResourceNotFoundException($"User with Id {id} not found.");
+            var usuario = await _context.Usuarios.FindAsync(id) ?? throw new ResourceNotFoundException($"User with Id {id} not found.");
+            var usuarioCognito = await _context.Usuarios.FirstOrDefaultAsync(u => u.CognitoId == CognitoId) ?? throw new UnauthorizedAccessException("You are not authorized to see this user.");
 
-            return new GetUsuarioDto()
+            //if user is not admin and is trying to see another user that is not themself
+            if (usuario.CognitoId != CognitoId && usuarioCognito.IdRol != 1)
+                throw new UnauthorizedAccessException("You are not authorized to see this user.");
+
+            return new UsuarioGetDto()
             {
                 Nombre = usuario.Nombre,
                 Apellido = usuario.Apellido,
@@ -55,7 +58,7 @@ namespace Ecommerce.Services
             };
         }
 
-        public async Task<List<GetUsuarioDto>> GetUsuarios()
+        public async Task<List<UsuarioGetDto>> GetUsuarios()
         {
             var listaUsuarios = await _context.Usuarios.ToListAsync();
 
@@ -63,7 +66,7 @@ namespace Ecommerce.Services
 
             //Creada la lista la modifica de usuario a usuarioDto 
             var listaUsuariosDto = listaUsuarios.Select(u =>
-                new GetUsuarioDto()
+                new UsuarioGetDto()
                 {
                     Nombre = u.Nombre,
                     Apellido = u.Apellido,
@@ -73,32 +76,7 @@ namespace Ecommerce.Services
             ).ToList();
             //intenta retornar la lista de usuarios
             return listaUsuariosDto;
-
-
-
         }
-
-        //public async Task<Usuario> GetUsuarioByEmail(string email)
-        //{
-
-        //    try
-        //    {
-        //        //Intenta retornar el usuario del email correspondiente
-        //        return await _context.Usuarios.FirstOrDefaultAsync(u => email == u.Email);
-
-        //    }
-        //    catch (DbUpdateException ex)
-        //    {
-        //        // Captura detalles específicos de la base de datos
-        //        throw new Exception("Error al guardar el usuario en la base de datos", ex);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        // Captura otros errores
-        //        throw new Exception("Ocurrió un error inesperado", ex);
-        //    }
-
-        //}
 
         public async Task<bool> DeleteUsuario(Guid id)
         {
@@ -114,12 +92,19 @@ namespace Ecommerce.Services
 
         }
 
-        public async Task<bool> UpdateUsuario(Guid id, PutUsuarioDto usuario, string CognitoId)
+        public async Task<bool> UpdateUsuario(Guid id, PutUsuarioDto usuario, string? requestedCognitoId)
         {
             //Busca el usuario en la base de datos
+            //var query = _context.Usuarios.AsQueryable();
+            //query = query.Where(u => u.Id == id);
+
+
             var usuarioUpdate = await _context.Usuarios.FirstOrDefaultAsync(u => u.Id == id) ?? throw new ResourceNotFoundException($"The user with ID: {id} not found.");
+            var usuarioCognito = await _context.Usuarios.FirstOrDefaultAsync(u => u.CognitoId == requestedCognitoId) ?? throw new UnauthorizedAccessException("You are not authorized to modify this user.");
 
-
+            //if user is not admin and is trying to modify another user that is not themself
+            if (usuarioUpdate.CognitoId != requestedCognitoId && usuarioCognito.IdRol != 1)
+                throw new UnauthorizedAccessException("You are not authorized to modify this user.");
 
             //Si el usuario existe lo modifica y devuelve verdadero
             usuarioUpdate.Nombre = usuario.Nombre;

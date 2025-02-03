@@ -9,21 +9,18 @@ using Ecommerce.Data.Contexts;
 using Ecommerce.Models;
 using Ecommerce.Interfaces;
 using Ecommerce.DTO;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Ecommerce.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class LoteController : ControllerBase
+    public class LoteController(ILoteService loteService) : ControllerBase
     {
-        private readonly ILoteService _loteService;
-
-        public LoteController(ILoteService loteService)
-        {
-            _loteService = loteService;
-        }
+        private readonly ILoteService _loteService = loteService;
 
         // GET: api/Lote
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Lote>>> GetLotes(Guid id)
         {
@@ -32,7 +29,8 @@ namespace Ecommerce.API.Controllers
         }
 
         //GET: api/Lote/5
-        [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
+        [HttpGet("{LotePorProductoId}")]
         public async Task<ActionResult<Lote>> GetLote(Guid id)
         {
             var lote = await _loteService.GetLoteById(id);
@@ -47,6 +45,7 @@ namespace Ecommerce.API.Controllers
 
         // PUT: api/Lote/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutLote(Guid id, int cantidad, bool activo)
         {
@@ -64,6 +63,7 @@ namespace Ecommerce.API.Controllers
 
         // POST: api/Lote
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<LoteDto>> PostLote(LoteDto lote)
         {
@@ -73,6 +73,7 @@ namespace Ecommerce.API.Controllers
         }
 
         // DELETE: api/Lote/5
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteLote(Guid id)
         {

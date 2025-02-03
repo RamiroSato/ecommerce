@@ -21,7 +21,7 @@ namespace Ecommerce.Data.Contexts
         #region Metodos
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            #region Rol
+            #region Roles
             modelBuilder.Entity<Rol>(r =>
             {
                 r.ToTable("Roles");
@@ -35,7 +35,8 @@ namespace Ecommerce.Data.Contexts
             });
             #endregion
 
-            #region Usuario
+            #region Usuarios
+
             modelBuilder.Entity<Usuario>(u =>
             {
 
@@ -93,7 +94,6 @@ namespace Ecommerce.Data.Contexts
                 .WithMany(w => w.Productos)
                 .UsingEntity(wp => wp.ToTable("WishlistsProductos"));
             });
-
             #endregion
 
             #region Wishlist

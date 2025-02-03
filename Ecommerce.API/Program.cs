@@ -8,6 +8,7 @@ using Ecommerce.API.Middleware;
 using Amazon.CognitoIdentityProvider;
 using Amazon.Runtime;
 using DotNetEnv;
+using System.Text.Json.Serialization;
 
 Env.Load();
 
@@ -17,10 +18,11 @@ var connectionString = Environment.GetEnvironmentVariable("Connection") ?? build
 var awsRegion = Environment.GetEnvironmentVariable("Region") ?? builder.Configuration["AWS:Region"];
 var awsUserPoolId = Environment.GetEnvironmentVariable("UserPoolId") ?? builder.Configuration["AWS:UserPoolId"];
 var awsAccessKeyId = Environment.GetEnvironmentVariable("AccessKeyId") ?? builder.Configuration["AWS:AccessKeyId"];
-var awsAppClientId = Environment.GetEnvironmentVariable("AppClientId") ?? builder.Configuration["AWS:AppClientId"];
+builder.Configuration["AWS:AppClientId"] = Environment.GetEnvironmentVariable("AppClientId") ?? builder.Configuration["AWS:AppClientId"];
 var awsBucketName = Environment.GetEnvironmentVariable("BucketName") ?? builder.Configuration["AWS:BucketName"];
-var awsClientSecretId = Environment.GetEnvironmentVariable("ClientSecretId") ?? builder.Configuration["AWS:ClientSecretId"];
+builder.Configuration["AWS:ClientSecretId"] = Environment.GetEnvironmentVariable("ClientSecretId") ?? builder.Configuration["AWS:ClientSecretId"];
 var awsSecretAccessKey = Environment.GetEnvironmentVariable("SecretAccessKey") ?? builder.Configuration["AWS:SecretAccessKey"];
+
 // Add services to the container.
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -34,7 +36,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         ValidateLifetime = true,
         LifetimeValidator = (before, expires, token, param) => expires > DateTime.UtcNow,
         ValidateAudience = true,
-        ValidAudience = awsAppClientId,
+        ValidAudience = builder.Configuration["AWS:AppClientId"],
         ValidateIssuerSigningKey = true
     };
 });
@@ -43,7 +45,12 @@ builder.Services.AddAuthorizationBuilder()
     .AddPolicy("Admin", policy => policy.RequireRole("Admin"))
     .AddPolicy("Cliente", policy => policy.RequireRole("Cliente"));
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+.AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+});
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -54,6 +61,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IProductoService, ProductoService>();
 builder.Services.AddScoped<ILoteService, LoteService>();
 builder.Services.AddScoped<IS3Service, S3Service>();
+builder.Services.AddScoped<IWishlistService, WishlistService>();
 
 builder.Services.AddSingleton<IAmazonCognitoIdentityProvider>(
     new AmazonCognitoIdentityProviderClient
@@ -72,7 +80,6 @@ builder.Services.AddDbContext<EcommerceContext>(options =>
         b => b.MigrationsAssembly("Ecommerce.Data") // Ensamblado de migraciones
     )
 );
-
 
 var app = builder.Build();
 

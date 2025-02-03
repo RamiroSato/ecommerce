@@ -7,7 +7,7 @@ namespace Ecommerce.Data.Contexts.Seeds
 {
     public class RolesSeeds : IEntityTypeConfiguration<Rol>
     {
-        public void Configure(EntityTypeBuilder<Rol> builder) 
+        public void Configure(EntityTypeBuilder<Rol> builder)
         {
             builder.HasData
                 (
@@ -30,7 +30,7 @@ namespace Ecommerce.Data.Contexts.Seeds
 
                 );
 
-        
+
         }
 
     }

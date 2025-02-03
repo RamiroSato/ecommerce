@@ -4,6 +4,7 @@ using Ecommerce.Exceptions;
 using Ecommerce.Interfaces;
 using Ecommerce.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -51,12 +52,14 @@ namespace Ecommerce.Services
         }
 
         public async Task<Rol> GetRolByCognitoIdAsync(string cognitoId)
-        {
-            var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.CognitoId == cognitoId)
-                ?? throw new ResourceNotFoundException("Usuario to get Rol not found");
+        {   
+            var roles = _context.Roles;
+            var usuarios = _context.Usuarios;
+            var query = roles.AsQueryable()
+                .Join(usuarios, r => r.Id, u => u.IdRol, (r, u) => new { r, u })
+                .Where(x => x.u.CognitoId == cognitoId);
 
-            var rol = await _context.Roles.FindAsync(usuario.IdRol)
-                ?? throw new ResourceNotFoundException("Rol to get not found");
+            var rol = await query.Select(x => x.r).FirstOrDefaultAsync() ?? throw new ResourceNotFoundException("Rol not found");       
 
             return rol;
         }
