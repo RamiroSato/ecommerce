@@ -8,7 +8,6 @@ using Ecommerce.Exceptions;
 
 namespace Ecommerce.Services
 {
-
     public class UsuarioService(EcommerceContext context) : IUsuarioService
     {
         private readonly EcommerceContext _context = context;
@@ -130,7 +129,6 @@ namespace Ecommerce.Services
             await _context.SaveChangesAsync();
             return true;
         }
-
     }
 }
 

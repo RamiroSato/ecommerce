@@ -31,7 +31,7 @@ namespace Ecommerce.Services
                 SecretHash = secretHash,
                 UserAttributes = [
                         new AttributeType { Name = "email",  Value = usuario.Email },
-                            new AttributeType { Name = "given_name", Value = usuario.Nombre}]
+                        new AttributeType { Name = "given_name", Value = usuario.Nombre}]
             };
 
             var response = await _cognitoClient.SignUpAsync(request);
