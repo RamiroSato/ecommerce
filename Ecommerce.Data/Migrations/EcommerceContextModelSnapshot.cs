@@ -52,7 +52,7 @@ namespace Ecommerce.Data.Migrations
 
                     b.HasIndex("IdProducto");
 
-                    b.ToTable("Lotes");
+                    b.ToTable("Lotes", (string)null);
                 });
 
             modelBuilder.Entity("Ecommerce.Models.Producto", b =>
@@ -89,7 +89,7 @@ namespace Ecommerce.Data.Migrations
 
                     b.HasIndex("IdTipoProducto");
 
-                    b.ToTable("Productos");
+                    b.ToTable("Productos", (string)null);
 
                     b.HasData(
                         new
@@ -199,7 +199,7 @@ namespace Ecommerce.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TipoProductos");
+                    b.ToTable("TipoProductos", (string)null);
 
                     b.HasData(
                         new
@@ -278,7 +278,7 @@ namespace Ecommerce.Data.Migrations
 
                     b.HasIndex("IdRol");
 
-                    b.ToTable("Usuarios");
+                    b.ToTable("Usuarios", (string)null);
 
                     b.HasData(
                         new
@@ -333,7 +333,7 @@ namespace Ecommerce.Data.Migrations
                     b.HasIndex("IdUsuario")
                         .IsUnique();
 
-                    b.ToTable("Wishlists");
+                    b.ToTable("Wishlists", (string)null);
                 });
 
             modelBuilder.Entity("ProductoWishlist", b =>

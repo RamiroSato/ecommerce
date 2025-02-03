@@ -14,11 +14,12 @@ namespace Ecommerce.API.Controllers
         readonly IWishlistService _wishlistService = service;
 
         [HttpGet]
-        public async Task<IActionResult> Get(Guid ID)
+        public async Task<IActionResult> Get(Guid? idwishlist, Guid? idUsuario)
         {
-            var wishlists = await _wishlistService.GetWishlist(ID, HttpContext.Items["cognitoId"]?.ToString());
+            var wishlists = await _wishlistService.GetWishlist(idwishlist, idUsuario, HttpContext.Items["cognitoId"]?.ToString());
             return Ok(wishlists);
         }
+
         [HttpPost]
         public async Task<IActionResult> Create(Guid IdUsuario)
         {

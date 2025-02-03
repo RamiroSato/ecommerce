@@ -35,7 +35,6 @@ namespace Ecommerce.Data.Contexts
             });
             #endregion
 
-
             #region Usuarios
 
             modelBuilder.Entity<Usuario>(u =>
@@ -60,7 +59,6 @@ namespace Ecommerce.Data.Contexts
                 u.HasOne(u => u.Wishlist)
                 .WithOne(w => w.Usuario)
                 .HasForeignKey<Wishlist>(w => w.IdUsuario);
-
 
             });
             #endregion

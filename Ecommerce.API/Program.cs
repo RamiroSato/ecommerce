@@ -8,6 +8,7 @@ using Ecommerce.API.Middleware;
 using Amazon.CognitoIdentityProvider;
 using Amazon.Runtime;
 using DotNetEnv;
+using System.Text.Json.Serialization;
 
 Env.Load();
 
@@ -44,7 +45,12 @@ builder.Services.AddAuthorizationBuilder()
     .AddPolicy("Admin", policy => policy.RequireRole("Admin"))
     .AddPolicy("Cliente", policy => policy.RequireRole("Cliente"));
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+.AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+});
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -55,6 +61,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IProductoService, ProductoService>();
 builder.Services.AddScoped<ILoteService, LoteService>();
 builder.Services.AddScoped<IS3Service, S3Service>();
+builder.Services.AddScoped<IWishlistService, WishlistService>();
 
 builder.Services.AddSingleton<IAmazonCognitoIdentityProvider>(
     new AmazonCognitoIdentityProviderClient
@@ -73,7 +80,6 @@ builder.Services.AddDbContext<EcommerceContext>(options =>
         b => b.MigrationsAssembly("Ecommerce.Data") // Ensamblado de migraciones
     )
 );
-
 
 var app = builder.Build();
 

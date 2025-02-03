@@ -16,27 +16,12 @@ namespace Ecommerce.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ProductoController : ControllerBase
+    public class ProductoController(IProductoService productoService) : ControllerBase
     {
-        private readonly IProductoService _productoService;
-        
-        public ProductoController(IProductoService productoService)
-        {
-            _productoService = productoService;
-        }
-
-        // GET: api/Producto
-        [Authorize(Roles = "Admin")]
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Producto>>> GetProductos()
-        {
-            var productos = await _productoService.GetAll();
-            return Ok(productos);
-        }
+        private readonly IProductoService _productoService = productoService;
 
         // SEARCH: api/BuscarProducto
-        [Authorize(Roles = "Admin,Cliente")]
-        [HttpGet("buscar")]
+        [HttpGet]
         public async Task<ActionResult<PaginacionResultado<ProductoUpdateDto>>> BuscarProductos(
             [FromQuery] string? Tipo,
             [FromQuery] int? Precio,
@@ -48,7 +33,6 @@ namespace Ecommerce.API.Controllers
         }
 
         // GET: api/Producto/5
-        [Authorize(Roles = "Admin,Cliente")]
         [HttpGet("{id}")]
         public async Task<ActionResult<Producto>> GetProducto(Guid id)
         {
@@ -84,9 +68,7 @@ namespace Ecommerce.API.Controllers
         [HttpPost]
         public async Task<ActionResult<Producto>> PostProducto(ProductoInsertDto insertDto)
         {
-            Producto producto;
             var productoCreado = await _productoService.Create(insertDto);
-
             return CreatedAtAction("GetProducto", new { id = productoCreado.Id }, productoCreado);
         }
 

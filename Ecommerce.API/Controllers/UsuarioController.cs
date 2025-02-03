@@ -32,7 +32,7 @@ namespace Ecommerce.API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUsuarioById(Guid id)
         {
-            var usuario = await _usuarioService.GetUsuario(id, HttpContext.Items["cognitoId"].ToString());
+            var usuario = await _usuarioService.GetUsuario(id, HttpContext.Items["cognitoId"]?.ToString());
             //Si puede encontrar el usuario sin problemas lo retorna en formato dto
             return Ok(usuario);
         }

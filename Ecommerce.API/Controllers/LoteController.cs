@@ -15,14 +15,9 @@ namespace Ecommerce.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class LoteController : ControllerBase
+    public class LoteController(ILoteService loteService) : ControllerBase
     {
-        private readonly ILoteService _loteService;
-
-        public LoteController(ILoteService loteService)
-        {
-            _loteService = loteService;
-        }
+        private readonly ILoteService _loteService = loteService;
 
         // GET: api/Lote
         [Authorize(Roles = "Admin")]
