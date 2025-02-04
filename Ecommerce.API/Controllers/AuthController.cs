@@ -15,12 +15,12 @@ namespace Ecommerce.API.Controllers
     {
         private readonly IAuthService _authService = authService;
 
-        //O no va, o se tiene que modificar para que coincida con el modelo de datos
+
         [HttpPost("register")]
         public async Task<IActionResult> Create([FromBody] AuthDto usuario)
         {
             var result = await _authService.RegisterAsync(usuario, HttpContext.Items["cognitoId"]?.ToString());
-            
+
             return Ok(result);
         }
 
@@ -37,7 +37,15 @@ namespace Ecommerce.API.Controllers
             var result = await _authService.LoginAsync(email, password);
             return Ok(result);
         }
-                       
+
+        [Authorize(Roles = "Admin")]
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> ActionResult(Guid id)
+        {
+            var result = await _authService.DeleteAsync(id);
+
+            return Ok(result);
+        }
     }
 
 }

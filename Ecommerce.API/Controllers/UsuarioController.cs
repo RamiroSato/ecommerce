@@ -37,20 +37,21 @@ namespace Ecommerce.API.Controllers
             return Ok(new { usuario.Nombre, usuario.Apellido, usuario.Email, usuario.IsActive ,usuario.Rol});
         }
 
+        //Cambie de lugar el delete para que tambien afecte a cognito cuando borro el usuario
 
-        [Authorize(Roles = "Admin")]
-        //Metodo para eliminar un suario especifico
-        [HttpDelete("id")]
-        public async Task<IActionResult> DeleteUser(Guid id)
-        {
-            //Si el usuario se encuentra en la base de datos lo borra y retorna el usuario que se acaba de eliminar en formato dto
-            await _usuarioService.DeleteUsuario(id);
-            return Ok("User successfully deleted");
-        }
+        //[Authorize(Roles = "Admin")]
+        ////Metodo para eliminar un suario especifico
+        //[HttpDelete("{id}")]
+        //public async Task<IActionResult> DeleteUser(Guid id)
+        //{
+        //    //Si el usuario se encuentra en la base de datos lo borra y retorna el usuario que se acaba de eliminar en formato dto
+        //    await _usuarioService.DeleteUsuario(id);
+        //    return Ok("User successfully deleted");
+        //}
 
         //Metodo para modificar usuarios
         [Authorize(Roles = "Admin,Cliente")]
-        [HttpPut("id")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> ModificarUsuario(Guid id, PutUsuarioDto usuario)
         {
             //Intenta hacer la modificacion al usuario

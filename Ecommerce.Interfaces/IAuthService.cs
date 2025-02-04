@@ -10,8 +10,11 @@ namespace Ecommerce.Interfaces
 
         Task<ConfirmSignUpResponse> ConfirmAccount(string email, string confirmAccountToken);
 
-        Task<AuthResponse> LoginAsync(string email, string password);       
+        Task<AuthResponse> LoginAsync(string email, string password);
 
-        
+        Task<AuthResponse> DeleteAsync(Guid id);
+
+
+
     }
 }

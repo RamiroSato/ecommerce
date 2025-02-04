@@ -97,10 +97,7 @@ namespace Ecommerce.Services
 
         public async Task<bool> UpdateUsuario(Guid id, PutUsuarioDto usuario, string? requestedCognitoId)
         {
-            //Busca el usuario en la base de datos
-            //var query = _context.Usuarios.AsQueryable();
-            //query = query.Where(u => u.Id == id);
-
+            
             var usuarioUpdate = await _context.Usuarios.FirstOrDefaultAsync(u => u.Id == id) ?? throw new ResourceNotFoundException($"The user with ID: {id} not found.");
             var usuarioCognito = await _context.Usuarios.FirstOrDefaultAsync(u => u.CognitoId == requestedCognitoId) ?? throw new UnauthorizedAccessException("You are not authorized to modify this user.");
 
