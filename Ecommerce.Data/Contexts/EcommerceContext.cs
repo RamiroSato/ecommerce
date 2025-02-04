@@ -52,7 +52,7 @@ namespace Ecommerce.Data.Contexts
                 u.Property(u => u.Activo).HasDefaultValue(true);
                 u.Property(u => u.FechaAlta).IsRequired().HasDefaultValueSql("GETDATE()");
 
-                u.HasOne(u => u.Rol)
+                u.HasOne(u => u.Rolid)
                 .WithMany(r => r.Usuarios)
                 .HasForeignKey(u => u.IdRol);
 

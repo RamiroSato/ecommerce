@@ -8,6 +8,7 @@ namespace Ecommerce.DTO
 {
     public class UsuarioGetDto
     {
+        public Guid? UserId { get; set; }
         public string Nombre { get; set; }
 
         public string Apellido { get; set; }
@@ -15,6 +16,8 @@ namespace Ecommerce.DTO
         public string Email { get; set; }
         
         public bool IsActive { get; set; }
+
+        public int Rol { get; set; }
 
     }
 }

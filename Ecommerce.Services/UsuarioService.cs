@@ -54,7 +54,8 @@ namespace Ecommerce.Services
                 Nombre = usuario.Nombre,
                 Apellido = usuario.Apellido,
                 Email = usuario.Email,
-                IsActive = usuario.Activo
+                IsActive = usuario.Activo,
+                Rol = usuario.IdRol 
             };
         }
 
@@ -68,10 +69,12 @@ namespace Ecommerce.Services
             var listaUsuariosDto = listaUsuarios.Select(u =>
                 new UsuarioGetDto()
                 {
+                    UserId = u.Id,
                     Nombre = u.Nombre,
                     Apellido = u.Apellido,
                     Email = u.Email,
-                    IsActive = u.Activo
+                    IsActive = u.Activo,
+                    Rol = u.IdRol
                 }
             ).ToList();
             //intenta retornar la lista de usuarios

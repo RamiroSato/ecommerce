@@ -34,7 +34,7 @@ namespace Ecommerce.API.Controllers
         {
             var usuario = await _usuarioService.GetUsuario(id, HttpContext.Items["cognitoId"]?.ToString());
             //Si puede encontrar el usuario sin problemas lo retorna en formato dto
-            return Ok(usuario);
+            return Ok(new { usuario.Nombre, usuario.Apellido, usuario.Email, usuario.IsActive ,usuario.Rol});
         }
 
 

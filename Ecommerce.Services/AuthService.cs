@@ -8,6 +8,7 @@ using Ecommerce.Interfaces;
 using Ecommerce.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using System.Net;
 
 
 namespace Ecommerce.Services
@@ -19,26 +20,24 @@ namespace Ecommerce.Services
         private readonly string _clientId = config.GetSection("AWS:AppClientId").Value;
         private readonly string _clientSecretId = config.GetSection("AWS:ClientSecretId").Value;
         private readonly EcommerceContext _context = context;
+        private readonly string _awsUserPoolId = config.GetSection("AWS:UserPoolId").Value;
 
         public async Task<AuthResponse> RegisterAsync(AuthDto usuario, string? requestedCognitoId)
         {
-
             int newUserRole = 2;
 
             if (!string.IsNullOrEmpty(requestedCognitoId))
             {
-                // Find the requesting user in the database
                 var usuarioCognito = await _context.Usuarios
                     .FirstOrDefaultAsync(u => u.CognitoId == requestedCognitoId)
                     ?? throw new UnauthorizedAccessException("You are not authorized to create users.");
 
-                // Check if they are trying to create an admin
+                if (usuario.IdRol == 1 && usuarioCognito.IdRol != 1)
+                {
+                    throw new UnauthorizedAccessException("Only admins can create other admin users.");
+                }
                 if (usuario.IdRol == 1)
                 {
-                    if (usuarioCognito.IdRol != 1) // Only admins can create other admins
-                    {
-                        throw new UnauthorizedAccessException("Only admins can create other admin users.");
-                    }
                     newUserRole = 1; // Set role as Admin
                 }
             }
@@ -46,34 +45,52 @@ namespace Ecommerce.Services
             {
                 throw new UnauthorizedAccessException("Only admins can create admin users.");
             }
-
+                       
             var secretHash = SecretHasher.GenerateSecretHash(usuario.Email, _clientId, _clientSecretId);
             var hashedPassword = SecretHasher.GenerateSecretHash(usuario.Password, _clientSecretId);
 
-            var request = new SignUpRequest
+            var signUpRequest = new SignUpRequest
             {
                 ClientId = _clientId,
                 Username = usuario.Email,
                 Password = hashedPassword,
                 SecretHash = secretHash,
                 UserAttributes = [
-                        new AttributeType { Name = "email",  Value = usuario.Email },
-                        new AttributeType { Name = "given_name", Value = usuario.Nombre}]
+                    new AttributeType { Name = "email", Value = usuario.Email },
+                    new AttributeType { Name = "given_name", Value = usuario.Nombre }
+                ]
             };
 
-            var response = await _cognitoClient.SignUpAsync(request);
+            var signUpResponse = await _cognitoClient.SignUpAsync(signUpRequest);
+                     
+                        
+            if (newUserRole == 1) // If Admin
+            {
+                var requestAdmin = new AdminAddUserToGroupRequest
+                {
+                    UserPoolId = _awsUserPoolId,
+                    Username = usuario.Email,
+                    GroupName = "Admin"
+                };
 
+                var responseAdmin = await _cognitoClient.AdminAddUserToGroupAsync(requestAdmin);
+
+                if (responseAdmin.HttpStatusCode != HttpStatusCode.OK)
+                {
+                    throw new Exception("Failed to add admin user to group");
+                }
+            }          
+
+                        
             var usuarioDto = new UsuarioDto
             {
                 IdRol = newUserRole,
-                CognitoId = response.UserSub,
+                CognitoId = signUpResponse.UserSub,
                 Nombre = usuario.Nombre,
                 Apellido = usuario.Apellido,
                 Password = hashedPassword,
                 Email = usuario.Email
-
             };
-            if (usuario == null) { throw new ResourceNotFoundException($"Error"); }
 
             await _usuarioService.AddUsuario(usuarioDto);
 
@@ -81,9 +98,10 @@ namespace Ecommerce.Services
             {
                 IsSuccess = true,
                 Message = "Usuario registrado correctamente",
-                UserId = response.UserSub
+                UserId = signUpResponse.UserSub
             };
         }
+
 
         public async Task<ConfirmSignUpResponse> ConfirmAccount(string email, string confirmAccountToken)
         {
@@ -133,7 +151,8 @@ namespace Ecommerce.Services
             {
                 IsSuccess = true,
                 Message = "Usuario logueado correctamente",
-                Tokens = response.AuthenticationResult
+                Tokens = response.AuthenticationResult,
+                UserId = _context.Usuarios.FirstOrDefault(u => u.Email == email)?.CognitoId ?? string.Empty
             };
         }
 
