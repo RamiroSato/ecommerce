@@ -19,7 +19,7 @@ namespace Ecommerce.API.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Create([FromBody] AuthDto usuario)
         {
-            var result = await _authService.RegisterAsync(usuario);
+            var result = await _authService.RegisterAsync(usuario, HttpContext.Items["cognitoId"]?.ToString());
             
             return Ok(result);
         }

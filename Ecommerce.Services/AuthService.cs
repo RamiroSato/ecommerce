@@ -6,20 +6,47 @@ using Ecommerce.Data.Contexts;
 using Ecommerce.DTO;
 using Ecommerce.Interfaces;
 using Ecommerce.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
 
 namespace Ecommerce.Services
 {
-    public class AuthService(IConfiguration config, IUsuarioService usuarioService, IAmazonCognitoIdentityProvider cognitoClient) : IAuthService
+    public class AuthService(IConfiguration config, IUsuarioService usuarioService, IAmazonCognitoIdentityProvider cognitoClient, EcommerceContext context) : IAuthService
     {
         private readonly IAmazonCognitoIdentityProvider _cognitoClient = cognitoClient;
         private readonly IUsuarioService _usuarioService = usuarioService;
         private readonly string _clientId = config.GetSection("AWS:AppClientId").Value;
         private readonly string _clientSecretId = config.GetSection("AWS:ClientSecretId").Value;
+        private readonly EcommerceContext _context = context;
 
-        public async Task<AuthResponse> RegisterAsync(AuthDto usuario)
+        public async Task<AuthResponse> RegisterAsync(AuthDto usuario, string? requestedCognitoId)
         {
+
+            int newUserRole = 2;
+
+            if (!string.IsNullOrEmpty(requestedCognitoId))
+            {
+                // Find the requesting user in the database
+                var usuarioCognito = await _context.Usuarios
+                    .FirstOrDefaultAsync(u => u.CognitoId == requestedCognitoId)
+                    ?? throw new UnauthorizedAccessException("You are not authorized to create users.");
+
+                // Check if they are trying to create an admin
+                if (usuario.IdRol == 1)
+                {
+                    if (usuarioCognito.IdRol != 1) // Only admins can create other admins
+                    {
+                        throw new UnauthorizedAccessException("Only admins can create other admin users.");
+                    }
+                    newUserRole = 1; // Set role as Admin
+                }
+            }
+            else if (usuario.IdRol == 1)
+            {
+                throw new UnauthorizedAccessException("Only admins can create admin users.");
+            }
+
             var secretHash = SecretHasher.GenerateSecretHash(usuario.Email, _clientId, _clientSecretId);
             var hashedPassword = SecretHasher.GenerateSecretHash(usuario.Password, _clientSecretId);
 
@@ -38,7 +65,7 @@ namespace Ecommerce.Services
 
             var usuarioDto = new UsuarioDto
             {
-                IdRol = 2,
+                IdRol = newUserRole,
                 CognitoId = response.UserSub,
                 Nombre = usuario.Nombre,
                 Apellido = usuario.Apellido,
@@ -84,11 +111,11 @@ namespace Ecommerce.Services
             {
                 AuthFlow = AuthFlowType.USER_PASSWORD_AUTH,
                 AuthParameters = new Dictionary<string, string>
-                        {
-                            { "USERNAME", email },
-                            { "PASSWORD", hashedPassword },
-                            { "SECRET_HASH", secretHash}
-                        },
+                            {
+                                { "USERNAME", email },
+                                { "PASSWORD", hashedPassword },
+                                { "SECRET_HASH", secretHash}
+                            },
                 ClientId = _clientId
             };
             var response = await _cognitoClient.InitiateAuthAsync(request);

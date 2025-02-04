@@ -39,7 +39,7 @@ namespace Ecommerce.Services
                         Activo = l.Activo,
                         FechaAlta = l.FechaAlta
                     }).ToList(),
-                    //Wishlists = p.Wishlists
+                    
                 })
                 .ToListAsync();
         }
