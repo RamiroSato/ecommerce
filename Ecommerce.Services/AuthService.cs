@@ -162,7 +162,7 @@ namespace Ecommerce.Services
         {
             var usuario = await _context.Usuarios.FindAsync(id) ?? throw new ResourceNotFoundException($"User with Id {id} not found.");
 
-            // 🔸 1. Eliminar de Cognito
+            //Eliminar el usuario de Cognito
             var deleteUserRequest = new AdminDeleteUserRequest
             {
                 Username = usuario.Email,
@@ -170,7 +170,7 @@ namespace Ecommerce.Services
             };
             await _cognitoClient.AdminDeleteUserAsync(deleteUserRequest);
 
-            // 🔸 2. Eliminar de la base de datos
+            //Eliminar el usuario de la base de datos
             var usuarioDelete = await _context.Usuarios.FirstOrDefaultAsync(u => u.Id == id);
             if (usuarioDelete != null)
             {
